@@ -1,0 +1,382 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="MAIN" Id="{ea79303e-9f3e-48a4-a626-3d055d893913}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	
+	fbDB					:	FB_PLCDBCreate	(sNetID:='',tTimeout	:=	T#5S);
+	
+	fbFormatString			:	FB_FormatString;
+	fbFormatString_1		:	FB_FormatString;
+	
+	fbDbRecordSelect		:	FB_DBRecordSelect_EX;
+	fbDbRecordArray	 		:	FB_DBRecordArraySelect;
+	
+	FB_DBRecordInsert1		:	FB_DBRecordInsert_EX;
+	
+	
+	ColomnInfo				:	ARRAY [0..4]	OF 	ST_ColumnInfo;
+	ColomnNames				:	ARRAY [0..4]	OF 	STRING;
+	strecord				:	ARRAY [0..5] 	OF 	ST_DB_Record;
+
+
+
+	
+	DbRecodVal				:	ST_DB_Record;
+	
+	stSQLStateSelect		: 	ST_DBSQLError;
+	stSQLStateInsert		:	ST_DBSQLError;
+	
+	stDatabaseConfig		:	T_DBConfig_SQLite;
+	
+	sInsertString			:	T_MaxString;		//	The variable of this type is PLC string with the maximal length, T_MaxString
+	cmd                    	:	T_Maxstring;	
+
+	TestValue1: LREAL		:=	10.22;
+	TestValue2: LREAL		:=	44.5123;
+	TestValue3: LREAL		:=	22.9923;	
+	TestValue4: LREAL		:=	210.2320;
+	TestValue5: LREAL		:=	0.220;
+
+
+
+	bError					:	BOOL;
+	bBusyInsert				:	BOOL;
+	bErrInsert				:	BOOL;
+	bBusySelect				:	BOOL;
+	bErrorSelect			:	BOOL;
+	
+	bCreateDB				:	BOOL;
+	bCreateTable			:	BOOL;	
+	bWriteActive			:	BOOL;
+	bReadActive				:	BOOL;
+	
+	nState					:	INT;
+
+	sMsg					:	STRING;
+	TableName				: 	T_MaxString	:=	'Tablo_Demo_TC1';
+	
+	
+	nRecIndex				:	UDINT	:=	0;
+	nErrIDSelect			:	UDINT;
+	nRecordCount			:	UDINT;
+	nErrid					:	UDINT;
+	nErridInsert			:	UDINT;
+	nhDBID					:	UDINT;	
+	
+	T3						: TON;
+	t1						: TON;
+	T2						: TON;
+	rtrig1					: R_TRIG;
+	rtrig2					: R_TRIG;
+	rtrig3					: R_TRIG;
+	rtrig4					: R_TRIG;
+	
+
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+stDatabaseConfig.sServer	:=	'C:\Database\DataBase_TC3_2.db';	//	Databasenin Oluşturulacağı Dosya Yolu
+
+rtrig1(CLK	:=	bCreateDB );
+rtrig2(CLK	:= 	bCreateTable);
+rtrig3(CLK	:= 	bWriteActive);
+rtrig4(CLK	:= 	bReadActive);
+
+
+
+		(**Kolonun Isimi*)				(*Kolonun Icinde bulunan Degiskenin Tipi*)		(*Kolonun Icinde Bulunan Degiskenin Boyutu*)
+ColomnInfo[0].sName	:=	'Float1'; 		ColomnInfo[0].eType	:=	E_ColumnType.Float;			ColomnInfo[0].nLength	:=	8;	
+ColomnInfo[1].sName	:=	'Float2';		ColomnInfo[1].eType	:=	E_ColumnType.Float;			ColomnInfo[1].nLength	:=	8;	
+ColomnInfo[2].sName	:=	'Float3';		ColomnInfo[2].eType	:=	E_ColumnType.Float;			ColomnInfo[2].nLength	:=	8;	
+ColomnInfo[3].sName	:=	'Float4';		ColomnInfo[3].eType	:=	E_ColumnType.Float;			ColomnInfo[3].nLength	:=	8;	
+ColomnInfo[4].sName	:=	'Float5';		ColomnInfo[4].eType	:=	E_ColumnType.Float;			ColomnInfo[4].nLength	:=	8;	
+
+
+
+
+
+
+CASE nState	OF
+
+0:
+	IF rtrig1.q			THEN
+		nState	:=	10;			//	Database Oluşturmak için durum 10. duruma geçilir.
+	ELSIF rtrig2.q		THEN      	
+		nState	:=	20;			//	Tablo Oluşturmak için durum 20. duruma geçilir.	
+	ELSIF	rtrig3.Q	THEN      	
+		nState	:=	30;			//	Mevcut Databaseye Veri Yazmak için durum 30. duruma geçilir.
+	ELSIF	rtrig4.q	THEN      	
+		nState	:=	40;			//	Mevcut Databasedeki Değerleri Okumak için 40. duruma geçilir.
+	END_IF
+
+	
+10:
+	
+	IF	  fbDB.Database(
+						pDatabaseConfig 	:= 	ADR(stDatabaseConfig) , 
+			  			cbDatabaseConfig	:=	SIZEOF(stDatabaseConfig) ,
+  						bCreateXMLConfig	:=	TRUE , 
+		  				pDBID				:=	ADR(nhDBID) )	THEN
+		
+		IF NOT fbdb.bError THEN
+			sMsg	:=	'Database Olusturma Basarili';
+			nState	:=	0;	
+		ELSIF fbdb.bError THEN	 
+			sMsg	:=	'Database Olusturma Hatali!';	
+		 	nState	:=	999;
+		END_IF
+	END_IF
+								  		
+						
+20:						
+	IF 		fbDB.Table(
+						 hDBID		:=	 nhDBID , 				//	Tablonun Olusuturulacagi DataBase nin ID si
+				  		 sTableName	:=	TableName,				//	Tablo Isimi 
+				 		 pTableCfg	:=	ADR(ColomnInfo) ,		//	Kolonların Isimlerini Bulunduran ARRAY Degiskeninin Adresi 
+				  		 cbTableCfg	:= 	SIZEOF(ColomnInfo)		//	Kolonların Isimlerini Bulunduran ARRAY Degiskeninin Boyutu
+						)	THEN
+						
+		IF NOT fbdb.bError THEN
+			sMsg	:=	'Tablo Olusturma Basarili';
+			nState	:=	0;
+		ELSIF fbdb.bError THEN
+			 sMsg	:=	'Tablo Olusturma Hatali!';	
+			 nState	:=	999;
+		END_IF						
+	END_IF
+							
+							
+30:
+	//SQL INSTERT TO Komutu ile Birlikte Float değerlerin STRING olarak bir arada yazılması
+	// INSERT TO ... Komutu Birlestirilerek sInsertString Değişkenine Kaydedilir. Bu değişkenin Adres ve Boyutu ADR ve SIZEOF ile Alınır.
+
+	fbFormatString(         sFormat:= 'INSERT INTO %S VALUES(%F,%F,%F,%F,%F)',			//	Olusutulan Format
+							arg1:= F_STRING(TableName),									//	Olusturulan Formatta Bulunan %s Degeri
+                        	arg2:= F_LREAL(TestValue1),								  	//	Olusturulan Formatta Bulunan %F Degerleri				
+                        	arg3:= F_LREAL(TestValue2),								  	//	Olusturulan Formatta Bulunan %F Degerleri
+                        	arg4:= F_LREAL(TestValue3),                               	//	Olusturulan Formatta Bulunan %F Degerleri
+                        	arg5:= F_LREAL(TestValue4),                               	//	Olusturulan Formatta Bulunan %F Degerleri
+							arg6:= F_LREAL(TestValue5),                               	//	Olusturulan Formatta Bulunan %F Degerleri
+                        	sOut=> sInsertString,										//	Olusturulan Formatin Tutuldugu Degisken
+                        	bError=> bError,
+                        	nErrId=> nErrid);	
+					
+	T2(IN:=TRUE , PT:=T#1S , Q=> , ET=> );
+
+	IF NOT bError	AND t2.Q THEN
+		T2(IN:=FALSE);
+		sMsg	:=	'DataFormat Olusturma Basarili';
+		nState	:=	35;
+	ELSIF	bError AND	t2.q	THEN
+		sMsg	:=	'DataFormat Olusturulamadi.';
+		T2(IN:=FALSE);
+		nState	:=	999;
+	END_IF
+
+						
+35:
+	 FB_DBRecordInsert1(
+                        sNetID		:=	'' ,
+                        hDBID		:=	nhDBID,						//	Degerlerin Yazilacagi Databasenin ID si
+						pCmdAddr	:=	ADR(sInsertString), 		//	Yazilacak Degerin Adresi
+						cbCmdSize	:=	SIZEOF(sInsertString) , 	//	Yazilacak Degerin Boyutu
+                        bExecute	:=	TRUE,
+                        tTimeout	:=	T#5S,
+                        bBusy		=>	bBusyInsert,
+                        bErroR		=>	bErrInsert,
+                        nErrID		=>	nErridInsert,
+                        sSQLState	=>	stSQLStateInsert);
+						
+	t1(IN:=TRUE , PT:=T#5S , Q=> , ET=> );
+	
+	IF t1.Q	AND	NOT bErrInsert THEN
+		FB_DBRecordInsert1(bExecute	:=	FALSE);
+		t1(IN	:=	FALSE);
+		sMsg	:=	'Yazma Islemi Basarili';
+		nState	:=	0;
+	ELSIF	t1.Q	AND bErrInsert THEN
+		FB_DBRecordInsert1(bExecute	:=	FALSE);
+		t1(IN	:=	FALSE);
+		sMsg	:=	'Yazma Islemi Hatali.';
+		nState	:=	999;
+	END_IF
+	
+
+40:
+	//SQL den Tabloda ki Degerleri Okumak icin Kullanilan Format Olusturulur ve cmd Degiskenine Kaydedilir
+
+	fbFormatString_1(           sFormat:= 'SELECT * FROM %S',					//	Olusutulan Format
+								arg1:= F_STRING(TableName),						//	Olusturulan Formatta Bulunan %s Degeri
+                        		sOut=> cmd,										//	Olusturulan Formatin Tutuldugu Degisken
+                        		bError=> bError,
+                        		nErrId=> nErrid);		
+	nState	:=	45;
+
+45:					
+		fbDbRecordArray(
+		sNetID				:= '' , 
+		hDBID				:= nhDBID, 				//	Okunacak Database nin ID si
+		pCmdAddr			:= ADR(cmd),			//	SQL den Okuma Yapmak İcin Kullanilan Komutun Adresi 
+		cbCmdSize			:= SIZEOF(cmd), 		//	SQL den Okuma Yapmak İcin Kullanilan Komutun Boyutu
+		nStartIndex			:= 0, 				 	//	Offset
+		nRecordCount		:= 5, 					//	Tablodan Okunacak Deger Sayisi
+		pDestAddr			:= ADR(strecord), 		//	Okunan Degerlerin Yazildigi ARRAY Structure in Adresi
+		cbRecordArraySize	:= SIZEOF(strecord) , 	//	Okunan Degerlerin Yazildigi ARRAY Structure in Boyutu
+		bExecute			:= TRUE , 
+		tTimeout			:= T#10S, 
+		bBusy				=> , 
+		bError				=>bErrorSelect , 
+		nErrID				=> , 
+		sSQLState			=> , 
+		nRecords			=> );
+		
+	t3(IN:=TRUE , PT:=T#2S , Q=> , ET=> );
+
+	IF NOT	fbDbRecordArray.bBusy	AND NOT	bErrorSelect	AND	t3.Q THEN
+			fbDbRecordArray(bExecute	:=	FALSE);
+			t3(IN	:=	FALSE); 
+			sMSg	:=	'Okuma İslemi Basarili.';
+			nState	:=	0;
+	ELSIF	bErrorSelect	AND	t3.Q THEN
+		fbDbRecordArray(bExecute	:=	FALSE);
+		t3(IN	:=	FALSE); 
+		sMsg	:=	'Okuma İslemi Hatali.';
+		nState:=999;
+	END_IF
+	
+999:
+;
+	
+
+END_CASE
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="826" Count="0" />
+      <LineId Id="934" Count="0" />
+      <LineId Id="982" Count="0" />
+      <LineId Id="935" Count="3" />
+      <LineId Id="813" Count="0" />
+      <LineId Id="960" Count="1" />
+      <LineId Id="939" Count="0" />
+      <LineId Id="814" Count="4" />
+      <LineId Id="367" Count="0" />
+      <LineId Id="828" Count="0" />
+      <LineId Id="804" Count="0" />
+      <LineId Id="269" Count="0" />
+      <LineId Id="418" Count="0" />
+      <LineId Id="242" Count="0" />
+      <LineId Id="273" Count="1" />
+      <LineId Id="389" Count="0" />
+      <LineId Id="388" Count="0" />
+      <LineId Id="390" Count="0" />
+      <LineId Id="328" Count="0" />
+      <LineId Id="792" Count="0" />
+      <LineId Id="926" Count="2" />
+      <LineId Id="807" Count="0" />
+      <LineId Id="825" Count="0" />
+      <LineId Id="329" Count="0" />
+      <LineId Id="933" Count="0" />
+      <LineId Id="352" Count="0" />
+      <LineId Id="277" Count="0" />
+      <LineId Id="930" Count="0" />
+      <LineId Id="280" Count="0" />
+      <LineId Id="810" Count="0" />
+      <LineId Id="354" Count="0" />
+      <LineId Id="322" Count="0" />
+      <LineId Id="283" Count="0" />
+      <LineId Id="691" Count="0" />
+      <LineId Id="286" Count="0" />
+      <LineId Id="999" Count="0" />
+      <LineId Id="287" Count="0" />
+      <LineId Id="289" Count="0" />
+      <LineId Id="355" Count="0" />
+      <LineId Id="291" Count="0" />
+      <LineId Id="356" Count="0" />
+      <LineId Id="293" Count="3" />
+      <LineId Id="298" Count="0" />
+      <LineId Id="820" Count="0" />
+      <LineId Id="385" Count="2" />
+      <LineId Id="959" Count="0" />
+      <LineId Id="299" Count="1" />
+      <LineId Id="996" Count="0" />
+      <LineId Id="301" Count="0" />
+      <LineId Id="303" Count="0" />
+      <LineId Id="995" Count="0" />
+      <LineId Id="305" Count="1" />
+      <LineId Id="309" Count="2" />
+      <LineId Id="448" Count="0" />
+      <LineId Id="821" Count="0" />
+      <LineId Id="823" Count="1" />
+      <LineId Id="484" Count="0" />
+      <LineId Id="956" Count="0" />
+      <LineId Id="486" Count="3" />
+      <LineId Id="517" Count="0" />
+      <LineId Id="490" Count="1" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="509" Count="0" />
+      <LineId Id="584" Count="0" />
+      <LineId Id="582" Count="0" />
+      <LineId Id="510" Count="0" />
+      <LineId Id="838" Count="0" />
+      <LineId Id="994" Count="0" />
+      <LineId Id="840" Count="0" />
+      <LineId Id="515" Count="0" />
+      <LineId Id="833" Count="0" />
+      <LineId Id="586" Count="0" />
+      <LineId Id="836" Count="0" />
+      <LineId Id="513" Count="0" />
+      <LineId Id="506" Count="0" />
+      <LineId Id="522" Count="1" />
+      <LineId Id="545" Count="10" />
+      <LineId Id="573" Count="0" />
+      <LineId Id="556" Count="0" />
+      <LineId Id="841" Count="0" />
+      <LineId Id="557" Count="0" />
+      <LineId Id="571" Count="0" />
+      <LineId Id="844" Count="0" />
+      <LineId Id="1000" Count="0" />
+      <LineId Id="842" Count="0" />
+      <LineId Id="567" Count="0" />
+      <LineId Id="848" Count="0" />
+      <LineId Id="847" Count="0" />
+      <LineId Id="849" Count="0" />
+      <LineId Id="846" Count="0" />
+      <LineId Id="561" Count="0" />
+      <LineId Id="526" Count="0" />
+      <LineId Id="524" Count="0" />
+      <LineId Id="595" Count="0" />
+      <LineId Id="965" Count="1" />
+      <LineId Id="968" Count="1" />
+      <LineId Id="975" Count="1" />
+      <LineId Id="967" Count="0" />
+      <LineId Id="980" Count="1" />
+      <LineId Id="978" Count="0" />
+      <LineId Id="697" Count="14" />
+      <LineId Id="598" Count="0" />
+      <LineId Id="786" Count="0" />
+      <LineId Id="784" Count="1" />
+      <LineId Id="776" Count="0" />
+      <LineId Id="778" Count="0" />
+      <LineId Id="788" Count="0" />
+      <LineId Id="852" Count="0" />
+      <LineId Id="851" Count="0" />
+      <LineId Id="780" Count="0" />
+      <LineId Id="782" Count="0" />
+      <LineId Id="789" Count="1" />
+      <LineId Id="783" Count="0" />
+      <LineId Id="779" Count="0" />
+      <LineId Id="854" Count="0" />
+      <LineId Id="637" Count="0" />
+      <LineId Id="853" Count="0" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="634" Count="0" />
+      <LineId Id="199" Count="0" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="191" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

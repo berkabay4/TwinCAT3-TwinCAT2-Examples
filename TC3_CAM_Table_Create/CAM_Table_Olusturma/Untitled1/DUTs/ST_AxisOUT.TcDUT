@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_AxisOUT" Id="{f8f7c74c-8e4b-43c6-8e47-95c9aeb30810}">
+    <Declaration><![CDATA[TYPE ST_AxisOUT :
+STRUCT
+	
+bPowerEnabled	:	BOOL;
+bPowerErr		:	BOOL;
+
+bAbsDone		:	BOOL;
+bAbsBusy		:	BOOL;
+bAbsErr			:	BOOL;
+
+bCamINDone		:	BOOL;
+
+bCamOUTDone		:	BOOL;
+
+bStopDone		:	BOOL;
+bStopActive		:	BOOL;
+
+bResetDone		:	BOOL;
+
+bReadDone		:	BOOL;
+bReadBusy		:	BOOL;
+bReadErr		:	BOOL;
+
+bWriteDone		:	BOOL;
+bWriteBusy		:	BOOL;
+bWriteErr		:	BOOL;
+
+nCamTableIdWR	: UDINT;
+
+
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

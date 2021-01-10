@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_DB_Record" Id="{045fff51-b2a7-4e42-a929-5966d063d9db}">
+    <Declaration><![CDATA[TYPE ST_DB_Record :
+STRUCT
+
+Float1	:	LREAL;
+Float2	:	LREAL;	
+Float3	:	LREAL;
+Float4	:	LREAL;	
+Float5	:	LREAL;
+
+
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <GVL Name="GVL_Servo" Id="{5117eeac-1ec2-4fb3-9d62-2ce8db3bb23a}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	axis1	:	AXIS_REF;
+	axis2	:	AXIS_REF;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

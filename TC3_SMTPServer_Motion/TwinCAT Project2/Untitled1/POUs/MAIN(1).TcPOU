@@ -1,0 +1,441 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="MAIN" Id="{bb863162-c9ea-4e78-b8ba-e4dff236f00d}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+		
+	nState: INT;
+	sMsg	:	STRING :=	'Sistemde Hata Olustu	Hata Kodu	=	 ';
+	sMsg2	: 	STRING;
+	sVar	:	STRING;
+		
+	bSend	:	BOOL;
+	bErr	:	BOOL;
+	bBusy	:	BOOL;
+	bExecute: BOOL;
+	
+	sAxis	:	ST_Axis;
+	fbmail: FB_SmtpV3;
+	fbMotion: FB_Motion;
+
+	sMsg3: STRING;
+	sVar2: STRING(255);
+	F_TRIG1: F_TRIG;
+	Sens1: BOOL;
+	counter: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+fbMotion(Axis:= .Axis1, StAxis:=sAxis);
+ACT_System();
+]]></ST>
+    </Implementation>
+    <Action Name="ACT_System" Id="{285e1227-4524-48c2-8603-6f6e814b0bc0}">
+      <Implementation>
+        <ST><![CDATA[
+
+	
+	F_TRIG1(CLK:=Sens1 , Q=> );
+
+
+	
+	sAxis.INPUT.fOverride	:=	100;
+	sAxis.INPUT.bStop	:= FALSE;
+	
+CASE nState OF
+	
+	0:
+	
+		saxis.INPUT.bMoveAbs	:=	FALSE;
+
+		IF  saxis.OUTPUT.bPowerActive
+		AND NOT sAxis.OUTPUT.bAbsErr	
+		AND saxis.OUTPUT.bPowerActive
+		AND sAxis.OUTPUT.bPowerStat THEN
+		 
+			nState	:=	1;
+						
+		END_IF
+		
+	1:
+				
+		IF bExecute 
+		AND NOT sAxis.OUTPUT.bPowerErr
+		AND sAxis.OUTPUT.bPowerActive 
+		AND NOT sAxis.OUTPUT.bStopActive THEN
+		
+			nState	:=	10;
+		
+		ELSIF sAxis.OUTPUT.bAbsErr THEN
+			nState:=999;
+		END_IF
+		
+	10:			
+		sAxis.INPUT.bStop	:=	FALSE;
+		sAxis.INPUT.bMoveAbs	:=	TRUE;
+		sAxis.INPUT.fPosition	:= 10000;
+		sAxis.INPUT.nVelocity	:=	5000;
+		
+		IF	sAxis.OUTPUT.bAbsBusy 
+		AND NOT sAxis.OUTPUT.bPowerErr
+		AND sAxis.OUTPUT.bPowerActive 
+		AND NOT sAxis.OUTPUT.bStopActive THEN
+					
+			nState	:=	20;
+				
+		ELSIF sAxis.OUTPUT.bAbsErr THEN
+			nState:=999;
+		END_IF
+
+	20:
+
+		IF sAxis.OUTPUT.bAbsDone 
+		AND NOT sAxis.OUTPUT.bPowerErr	
+		AND NOT sAxis.OUTPUT.bAbsErr	
+		AND saxis.OUTPUT.bPowerActive	THEN
+
+			nState	:=	30;
+			sAxis.INPUT.bMoveAbs	:=	FALSE;
+				
+		ELSIF sAxis.OUTPUT.bAbsErr THEN
+			nState:=999;
+		END_IF
+			
+	30:	
+		sAxis.INPUT.bStop	:=	FALSE;
+		sAxis.INPUT.bMoveAbs	:=	TRUE;
+		sAxis.INPUT.fPosition	:= 45000;
+		sAxis.INPUT.nVelocity	:=	7000;
+			
+		
+		
+			IF	sAxis.OUTPUT.bAbsBusy 
+			AND NOT sAxis.OUTPUT.bPowerErr
+			AND sAxis.OUTPUT.bPowerActive 
+			AND NOT sAxis.OUTPUT.bStopActive THEN							
+				nState	:=	40;		
+			ELSIF sAxis.OUTPUT.bAbsErr THEN
+				nState:=999;
+			END_IF
+	
+				
+	40:
+		IF sAxis.OUTPUT.bAbsDone 
+		AND NOT sAxis.OUTPUT.bPowerErr	
+		AND NOT sAxis.OUTPUT.bAbsErr	
+		AND saxis.OUTPUT.bPowerActive	THEN
+
+		
+			sAxis.INPUT.bMoveAbs	:=	FALSE;
+
+			IF f_trig1.Q THEN
+					
+				counter	:=	counter	+	1;
+
+				IF counter >=5 THEN
+					counter	:=	0;
+					nState	:=	50;
+				END_IF
+			
+			END_IF
+
+			
+				
+			ELSIF sAxis.OUTPUT.bAbsErr THEN
+				nState:=999;
+			END_IF
+					
+				
+		50:	
+			sAxis.INPUT.bStop	:=	FALSE;
+			sAxis.INPUT.bMoveAbs	:=	TRUE;
+			sAxis.INPUT.fPosition	:= 0;
+			sAxis.INPUT.nVelocity	:=	7000;
+		
+			IF	sAxis.OUTPUT.bAbsBusy AND NOT	sAxis.OUTPUT.bPowerErr	
+			AND NOT	sAxis.OUTPUT.bAbsErr	THEN
+					
+				nState	:=	60;
+				
+			ELSIF sAxis.OUTPUT.bAbsErr THEN
+				nState:=999;
+			END_IF
+			
+		60:
+
+			IF sAxis.OUTPUT.bAbsDone AND NOT sAxis.OUTPUT.bPowerErr	
+			AND NOT	sAxis.OUTPUT.bAbsErr	THEN
+
+				nState	:=	0;
+				sAxis.INPUT.bMoveAbs	:=	FALSE;
+				
+			ELSIF sAxis.OUTPUT.bAbsErr THEN
+				nState:=999;
+			END_IF
+				
+		999:
+		
+			saxis.INPUT.bReset	:=	TRUE;
+			saxis.INPUT.bMoveAbs	:=	FALSE;
+			
+			fbmail.pMessage	:=	ADR(sVAr);
+			fbmail.cbMessage	:=	SIZEOF(sVar);
+			bSend	:=	TRUE;	
+    		
+		
+			IF saxis.OUTPUT.bResetDone THEN
+				nState	:=	1000;
+			END_IF
+			
+		1000:
+			
+			IF NOT sAxis.OUTPUT.bPowerErr 
+			AND NOT saxis.OUTPUT.bAbsErr
+			AND saxis.OUTPUT.bPowerActive
+			AND NOT saxis.OUTPUT.bPowerErr THEN
+				
+				bSend	:=	FALSE;
+				nState	:=	0;
+			
+			END_IF
+        	
+	
+END_CASE
+
+
+	IF NOT bExecute THEN
+		nState	:=	0;
+		
+		sAxis.INPUT.bStop	:=	TRUE;
+		saxis.INPUT.bMoveAbs	:=	FALSE;
+		
+		sAxis.INPUT.fPosition	:= 0;
+		sAxis.INPUT.nVelocity	:=	0;
+
+			IF saxis.OUTPUT.bStopDone AND NOT sAxis.OUTPUT.bPowerErr 
+			AND sAxis.OUTPUT.bPowerActive THEN
+					sAxis.INPUT.bStop	:=	FALSE;
+					nState	:=	0;
+			END_IF
+	END_IF
+
+
+	
+		fbmail(
+	sNetId:='' , 
+	sSmtpServer:='smtp.gmail.com' , 
+	sUsername:= 'berkayabay10@gmail.com', 
+	sPassword:= 'Roastm4505', 
+	nEncryption:= 2, 
+	sFrom:= 'berkayabay10@gmail.com', 
+	sTo:= 'berkayabay10@gmail.com', 
+	sCc:= , 
+	sBcc:= , 
+	sSubject:= 'Sistem Hatasi Mevcut', 
+	pMessage:= , 
+	cbMessage:= , 
+	bExecute:=bSend , 
+	tTimeout:=T#2S , 
+	bBusy=>bBusy , 
+	bError=>bErr , 
+	nErrId=> );
+	
+
+	sMsg2	:=	UDINT_TO_STRING(saxis.OUTPUT.AbsErr);
+	sMsg3	:=	UDINT_TO_STRING(saxis.OUTPUT.bPowErrid);
+	
+	sVar	:=	CONCAT(STR1:=sMsg , STR2:=sMsg2 );
+	sVar2	:=	CONCAT(STR1:=sMsg , STR2:=sMsg3 );
+	
+	
+		IF 	saxis.OUTPUT.bPowerErr THEN
+	
+			fbmail.pMessage	:=	ADR(sVAr2);
+			fbmail.cbMessage	:=	SIZEOF(sVar2);
+			bSend	:=	TRUE;
+		
+			saxis.INPUT.bReset	:=	TRUE;
+			
+				IF saxis.OUTPUT.bResetDone 
+				AND NOT saxis.OUTPUT.bAbsErr 
+				AND NOT saxis.OUTPUT.bPowerErr THEN
+					
+					bSend	:=	FALSE;
+					saxis.INPUT.bMoveAbs	:=	FALSE;
+					nState	:=	0;
+				
+				END_IF
+			END_IF
+]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="MAIN">
+      <LineId Id="6" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="32" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_System">
+      <LineId Id="554" Count="0" />
+      <LineId Id="573" Count="1" />
+      <LineId Id="418" Count="0" />
+      <LineId Id="534" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="524" Count="0" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="378" Count="0" />
+      <LineId Id="392" Count="0" />
+      <LineId Id="404" Count="0" />
+      <LineId Id="393" Count="0" />
+      <LineId Id="398" Count="0" />
+      <LineId Id="471" Count="0" />
+      <LineId Id="519" Count="0" />
+      <LineId Id="441" Count="0" />
+      <LineId Id="394" Count="0" />
+      <LineId Id="446" Count="0" />
+      <LineId Id="380" Count="0" />
+      <LineId Id="472" Count="0" />
+      <LineId Id="396" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="475" Count="0" />
+      <LineId Id="230" Count="0" />
+      <LineId Id="474" Count="0" />
+      <LineId Id="473" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="4" />
+      <LineId Id="233" Count="0" />
+      <LineId Id="235" Count="0" />
+      <LineId Id="27" Count="4" />
+      <LineId Id="478" Count="1" />
+      <LineId Id="477" Count="0" />
+      <LineId Id="33" Count="1" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="480" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="481" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="254" Count="0" />
+      <LineId Id="257" Count="1" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="259" Count="0" />
+      <LineId Id="262" Count="0" />
+      <LineId Id="60" Count="3" />
+      <LineId Id="512" Count="1" />
+      <LineId Id="508" Count="3" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="406" Count="1" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="71" Count="2" />
+      <LineId Id="505" Count="2" />
+      <LineId Id="243" Count="0" />
+      <LineId Id="548" Count="0" />
+      <LineId Id="535" Count="0" />
+      <LineId Id="549" Count="1" />
+      <LineId Id="245" Count="0" />
+      <LineId Id="538" Count="0" />
+      <LineId Id="546" Count="0" />
+      <LineId Id="541" Count="0" />
+      <LineId Id="540" Count="0" />
+      <LineId Id="543" Count="1" />
+      <LineId Id="547" Count="0" />
+      <LineId Id="536" Count="0" />
+      <LineId Id="551" Count="0" />
+      <LineId Id="545" Count="0" />
+      <LineId Id="246" Count="0" />
+      <LineId Id="248" Count="0" />
+      <LineId Id="408" Count="1" />
+      <LineId Id="251" Count="0" />
+      <LineId Id="110" Count="1" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="114" Count="8" />
+      <LineId Id="410" Count="1" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="412" Count="0" />
+      <LineId Id="127" Count="7" />
+      <LineId Id="413" Count="1" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="376" Count="0" />
+      <LineId Id="399" Count="0" />
+      <LineId Id="500" Count="0" />
+      <LineId Id="496" Count="0" />
+      <LineId Id="528" Count="1" />
+      <LineId Id="526" Count="0" />
+      <LineId Id="498" Count="0" />
+      <LineId Id="527" Count="0" />
+      <LineId Id="401" Count="0" />
+      <LineId Id="383" Count="2" />
+      <LineId Id="346" Count="0" />
+      <LineId Id="342" Count="1" />
+      <LineId Id="491" Count="0" />
+      <LineId Id="514" Count="0" />
+      <LineId Id="516" Count="0" />
+      <LineId Id="437" Count="0" />
+      <LineId Id="492" Count="0" />
+      <LineId Id="373" Count="0" />
+      <LineId Id="345" Count="0" />
+      <LineId Id="493" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="142" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="147" Count="1" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="552" Count="0" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="553" Count="0" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="226" Count="0" />
+      <LineId Id="157" Count="1" />
+      <LineId Id="150" Count="0" />
+      <LineId Id="179" Count="0" />
+      <LineId Id="178" Count="0" />
+      <LineId Id="582" Count="0" />
+      <LineId Id="585" Count="17" />
+      <LineId Id="604" Count="0" />
+      <LineId Id="606" Count="4" />
+      <LineId Id="583" Count="1" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="447" Count="0" />
+      <LineId Id="531" Count="0" />
+      <LineId Id="530" Count="0" />
+      <LineId Id="532" Count="0" />
+      <LineId Id="485" Count="0" />
+      <LineId Id="449" Count="0" />
+      <LineId Id="533" Count="0" />
+      <LineId Id="450" Count="0" />
+      <LineId Id="454" Count="0" />
+      <LineId Id="487" Count="0" />
+      <LineId Id="456" Count="0" />
+      <LineId Id="466" Count="0" />
+      <LineId Id="488" Count="0" />
+      <LineId Id="467" Count="1" />
+      <LineId Id="457" Count="0" />
+      <LineId Id="489" Count="0" />
+      <LineId Id="453" Count="0" />
+      <LineId Id="163" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

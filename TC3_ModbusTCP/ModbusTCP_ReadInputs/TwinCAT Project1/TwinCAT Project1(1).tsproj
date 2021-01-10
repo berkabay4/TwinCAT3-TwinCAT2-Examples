@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4022.29">
+	<Project ProjectGUID="{746BA98C-B8CD-4A5F-953C-F307D7BBE826}" Target64Bit="true" ShowHideConfigurations="#x306">
+		<System>
+			<Tasks>
+				<Task Id="3" Priority="20" CycleTime="100000" AmsPort="350" AdtTasks="true">
+					<Name>PlcTask</Name>
+				</Task>
+			</Tasks>
+		</System>
+		<Plc>
+			<Project GUID="{DDFE8935-588D-4C9C-8BE5-29B6AAE231C1}" Name="Untitled1" PrjFilePath="Untitled1\Untitled1.plcproj" TmcFilePath="Untitled1\Untitled1.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2">
+					<Name>Untitled1 Instance</Name>
+					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
+					<Vars VarGrpType="1">
+						<Name>PlcTask Inputs</Name>
+						<Var>
+							<Name>MAIN.binput1</Name>
+							<Type>BIT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.binput2</Name>
+							<Type>BIT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.binput3</Name>
+							<Type>BIT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.binput4</Name>
+							<Type>BIT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.binput5</Name>
+							<Type>BIT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.binput6</Name>
+							<Type>BIT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.binput7</Name>
+							<Type>BIT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.binput8</Name>
+							<Type>BIT</Type>
+						</Var>
+					</Vars>
+					<TaskPouOids>
+						<TaskPouOid Prio="20" OTCID="#x08502001"/>
+					</TaskPouOids>
+				</Instance>
+			</Project>
+		</Plc>
+	</Project>
+</TcSmProject>

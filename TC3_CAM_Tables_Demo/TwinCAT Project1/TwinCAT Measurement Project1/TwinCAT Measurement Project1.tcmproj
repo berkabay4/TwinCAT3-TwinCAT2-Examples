@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{3da03426-d109-431c-8cdf-d6c90a5794de}</ProjectGuid>
+    <AssemblyName>TwinCAT Measurement Project1</AssemblyName>
+    <Name>TwinCAT Measurement Project1</Name>
+    <RootNamespace>TwinCAT Measurement Project1</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="C:\Users\Berkay ABAY\Downloads\Beckhoff_Staj_Uygulamalar-20210110T212551Z-001\Beckhoff_Staj_Uygulamalar\CAM_Tables\TwinCAT Project1\TwinCAT Measurement Project1\Scope YT Project1.tcscopex" />
+  </ItemGroup>
+</Project>

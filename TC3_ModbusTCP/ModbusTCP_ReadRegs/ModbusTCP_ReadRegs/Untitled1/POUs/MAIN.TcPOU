@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="MAIN" Id="{12f1c17e-484a-4f47-859b-178b01c50a7e}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	fbReadRegs	:	FB_MBReadRegs;
+	bRead		:	BOOL;
+	nValue		:	ARRAY[0..3] OF INT;
+	M0	AT%MB0	:	ARRAY[0..3] OF WORD;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbReadRegs(
+	sIPAddr:='' , 
+	nTCPPort:=502 , 
+	nUnitID:=255 , 
+	nQuantity:=4 , 
+	nMBAddr:=16#3000 , 
+	cbLength:= SIZEOF(nValue), 
+	pDestAddr:= ADR(nValue) , 
+	bExecute:=bRead, 
+	tTimeout:=T#5S , 
+	bBusy=> , 
+	bError=> , 
+	nErrId=> , 
+	cbRead=> );]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="7" Count="12" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

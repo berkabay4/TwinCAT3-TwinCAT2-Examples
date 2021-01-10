@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="MAIN" Id="{c8d72e14-0a57-4650-8015-1b73cc590f1f}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[PRG_Camming();
+FB_Servo1(CAMTABLE:=CAMTABLE , Axis:=Axis1 , Slave:=Axis2 , stAxisInterface:=AxisInterface1 );
+FB_Servo2(CAMTABLE:=CAMTABLE , Axis:=Axis2 , Slave:=Axis1 , stAxisInterface:=AxisInterface2 );
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="11" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

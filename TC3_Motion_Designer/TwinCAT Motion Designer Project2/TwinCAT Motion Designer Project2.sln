@@ -1,0 +1,12 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{7D049A34-F7A8-47F4-AF65-57433FD83A7E}") = "TwinCAT Motion Designer Project2", "TwinCAT Motion Designer Project2\TwinCAT Motion Designer Project2.tcmdproj", "{36357195-4FD7-4EB2-A56B-610473EE54C7}"
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

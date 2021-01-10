@@ -1,0 +1,359 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="PRG_Camming" Id="{9300bb5a-f69c-4e7e-a1f0-9eaf896a99ee}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Camming
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	nState: INT;
+	bExecute: BOOL;
+	bWriteDoneButton: BOOL;
+	ResetButton: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+MotionFunction[1].FunctionType	:=	MOTIONFUNCTYPE_SINUSLINIE;
+MotionFunction[2].FunctionType	:=	MOTIONFUNCTYPE_SINUSLINIE;
+MotionFunction[3].FunctionType	:=	MOTIONFUNCTYPE_SINUSLINIE;
+MotionFunction[4].FunctionType	:=	MOTIONFUNCTYPE_SINUSLINIE;
+MotionFunction[5].FunctionType	:=	MOTIONFUNCTYPE_SINUSLINIE;
+MotionFunction[6].FunctionType	:=	MOTIONFUNCTYPE_SINUSLINIE;
+
+
+CAMTABLE.TableType	:= MC_TABLETYPE_MOTIONFUNCTION;
+CAMTABLE.pArray		:= ADR(MotionFunction);
+CAMTABLE.ArraySize	:= SIZEOF(MotionFunction);
+CAMTABLE.NoOfColumns:= 1;
+CAMTABLE.NoOfRows	:= SIZEOF(MotionFunction)/SIZEOF(MotionFunction[1]);
+
+
+AxisInterface1.IN.bPower	:=	TRUE;
+AxisInterface1.IN.nOverride	:=	100;
+
+AxisInterface2.IN.bPower	:=	TRUE;
+AxisInterface2.IN.nOverride	:=	100;
+
+
+
+CASE nState	OF
+	
+	0:
+		IF bExecute	
+		AND AxisInterface1.OUT.bPowerEnabled 
+		AND AxisInterface2.OUT.bPowerEnabled	THEN
+			Axisinterface1.IN.bStop		:=	FALSE;
+			Axisinterface2.IN.bStop		:=	FALSE;
+			
+			IF NOT AxisInterface1.OUT.bStopActive AND NOT AxisInterface2.OUT.bStopActive THEN
+							nState:=5;
+			END_IF
+			
+		END_IF
+		
+		
+	5:
+		AxisInterface1.IN.bCamIN	:=TRUE;
+		AxisInterface1.IN.nCamTableID	:=	1;
+		
+		IF AxisInterface1.OUT.bCamINDone	THEN			
+			AxisInterface1.IN.bCamIN	:=FALSE;
+			nState						:=	10;			
+		END_IF
+	
+	10:
+			
+
+			IF AxisInterface1.OUT.bPowerEnabled 
+			AND AxisInterface2.OUT.bPowerEnabled	THEN
+			
+	
+			
+			AxisInterface1.IN.fPos		:=	18000;
+			AxisInterface1.IN.fVelocity	:=	1500;
+		
+			AxisInterface1.IN.bAbs		:=	TRUE;			
+			nstate	:=	20;
+			
+			
+		
+		ELSIF Axisinterface1.OUT.bAbsErr	THEN
+			nState	:=	999;
+		END_IF
+		
+	
+			
+			20:	
+		IF AxisInterface1.OUT.bAbsBusy
+		AND NOT AxisInterface1.OUT.bAbsErr	THEN
+			
+			nState	:=	30;
+			
+			ELSIF Axisinterface1.OUT.bAbsErr	THEN
+				nState	:=	999;
+			END_IF
+			
+	
+	30:
+		IF AxisInterface1.OUT.bAbsDone
+		AND NOT AxisInterface1.OUT.bAbsErr	THEN
+		
+		AxisInterface1.IN.bAbs		:=	FALSE;
+		AxisInterface1.IN.bCamOUT	:=	TRUE;
+		AxisInterface1.IN.bCamIN	:=FALSE;
+
+		nState	:=	31;
+		
+			
+		ELSIF Axisinterface1.OUT.bAbsErr	THEN
+	//	nState	:=	999;
+			
+		END_IF
+		
+		31:
+			IF AxisInterface1.OUT.bCamOUTDone	THEN
+				nState	:=	32;
+				AxisInterface1.IN.bCamOUT	:=	FALSE;
+			END_IF
+		
+	32:
+		AxisInterface1.IN.bRead	:=	TRUE;
+		AxisInterface1.IN.nCamTableIdWr	:=	1;
+
+			IF AxisInterface1.OUT.bReadDone THEN
+				nState	:=40;
+				AxisInterface1.IN.bRead	:= FALSE;		
+			END_IF
+		
+		
+	40:
+	
+		MotionFunction[1].SlavePos	:= arrSlavePos[1];
+		MotionFunction[2].SlavePos	:= arrSlavePos[2];
+		MotionFunction[3].SlavePos	:= arrSlavePos[3];
+		MotionFunction[4].SlavePos	:= arrSlavePos[4];
+		MotionFunction[5].SlavePos	:= arrSlavePos[5];
+		MotionFunction[6].SlavePos	:= arrSlavePos[6];
+		MotionFunction[7].SlavePos	:= arrSlavePos[7];
+		
+		MotionFunction[1].MasterPos	:= 0;
+		MotionFunction[2].MasterPos	:= 60;
+		MotionFunction[3].MasterPos	:= 120;
+		MotionFunction[4].MasterPos	:= 180;
+		MotionFunction[5].MasterPos	:= 240;
+		MotionFunction[6].MasterPos	:= 300;
+		MotionFunction[7].MasterPos	:= 360;
+		
+	
+		
+		
+		
+AxisInterface1.IN.bWrite	:=	bWriteDoneButton;
+		
+		IF AxisInterface1.OUT.bWriteDone	 THEN
+			AxisInterface1.IN.bWrite	:= FALSE;
+			nState					:= 50;		
+		END_IF
+	
+	50:
+		
+		IF AxisInterface1.OUT.bPowerEnabled 
+		AND AxisInterface1.OUT.bPowerEnabled
+		AND NOT AxisInterface1.OUT.bAbsErr	THEN
+		
+			AxisInterface1.IN.fPos		:=	0;
+			AxisInterface1.IN.fVelocity	:=	2000;
+			AxisInterface1.IN.bAbs		:=	TRUE;
+			
+			nState						:=	60;
+			
+	
+		ELSIF Axisinterface1.OUT.bAbsErr	THEN
+			nState	:=	999;
+		END_IF
+	
+	60:
+	
+		IF AxisInterface1.OUT.bAbsBusy
+		AND NOT AxisInterface1.OUT.bAbsErr	THEN
+			
+			nState	:=	70;
+			AxisInterface1.IN.bAbs		:=	FALSE;
+			
+		ELSIF Axisinterface1.OUT.bAbsErr	THEN
+			nState	:=	999;
+		END_IF
+			
+
+	70:
+		
+		IF AxisInterface1.OUT.babsdone
+		AND NOT AxisInterface1.OUT.bAbsErr	THEN
+		
+			nState	:=	0;
+
+			
+		ELSIF Axisinterface1.OUT.bAbsErr	THEN
+				nState	:=	999;
+		END_IF
+		
+END_CASE
+
+IF NOT bExecute THEN
+	
+	AxisInterface1.IN.bStop	:=	TRUE;
+	AxisInterface2.IN.bStop	:=	TRUE;
+
+	AxisInterface1.IN.bAbs	:=	FALSE;
+
+		
+END_IF
+	
+	
+IF ResetButton THEN
+
+
+	AxisInterface1.IN.bReset	:=	TRUE;	
+	
+	IF AxisInterface1.OUT.bResetDone	THEN
+		nState	:=	0;
+		bExecute	:=	FALSE;
+	END_IF
+
+END_IF
+	]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_Camming">
+      <LineId Id="75" Count="0" />
+      <LineId Id="362" Count="12" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="14" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="35" Count="1" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="41" Count="1" />
+      <LineId Id="271" Count="0" />
+      <LineId Id="269" Count="0" />
+      <LineId Id="341" Count="3" />
+      <LineId Id="346" Count="1" />
+      <LineId Id="345" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="311" Count="0" />
+      <LineId Id="349" Count="0" />
+      <LineId Id="312" Count="0" />
+      <LineId Id="382" Count="2" />
+      <LineId Id="317" Count="0" />
+      <LineId Id="319" Count="1" />
+      <LineId Id="316" Count="0" />
+      <LineId Id="315" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="358" Count="0" />
+      <LineId Id="266" Count="0" />
+      <LineId Id="278" Count="0" />
+      <LineId Id="310" Count="0" />
+      <LineId Id="275" Count="0" />
+      <LineId Id="268" Count="0" />
+      <LineId Id="52" Count="1" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="304" Count="0" />
+      <LineId Id="254" Count="1" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="57" Count="2" />
+      <LineId Id="256" Count="1" />
+      <LineId Id="309" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="155" Count="1" />
+      <LineId Id="204" Count="0" />
+      <LineId Id="165" Count="3" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="84" Count="2" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="303" Count="0" />
+      <LineId Id="130" Count="0" />
+      <LineId Id="359" Count="1" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="299" Count="0" />
+      <LineId Id="301" Count="1" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="353" Count="1" />
+      <LineId Id="356" Count="1" />
+      <LineId Id="396" Count="0" />
+      <LineId Id="355" Count="0" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="136" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="340" Count="0" />
+      <LineId Id="99" Count="2" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="103" Count="2" />
+      <LineId Id="107" Count="3" />
+      <LineId Id="375" Count="0" />
+      <LineId Id="380" Count="1" />
+      <LineId Id="112" Count="4" />
+      <LineId Id="377" Count="2" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="323" Count="3" />
+      <LineId Id="120" Count="1" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="122" Count="1" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="169" Count="2" />
+      <LineId Id="173" Count="6" />
+      <LineId Id="185" Count="1" />
+      <LineId Id="180" Count="0" />
+      <LineId Id="182" Count="2" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="191" Count="0" />
+      <LineId Id="188" Count="1" />
+      <LineId Id="192" Count="1" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="206" Count="0" />
+      <LineId Id="196" Count="6" />
+      <LineId Id="210" Count="4" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="218" Count="0" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="219" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="221" Count="0" />
+      <LineId Id="220" Count="0" />
+      <LineId Id="226" Count="0" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="281" Count="1" />
+      <LineId Id="225" Count="0" />
+      <LineId Id="280" Count="0" />
+      <LineId Id="227" Count="0" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="283" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="243" Count="0" />
+      <LineId Id="253" Count="0" />
+      <LineId Id="248" Count="0" />
+      <LineId Id="244" Count="0" />
+      <LineId Id="297" Count="0" />
+      <LineId Id="249" Count="1" />
+      <LineId Id="252" Count="0" />
+      <LineId Id="251" Count="0" />
+      <LineId Id="247" Count="0" />
+      <LineId Id="245" Count="0" />
+      <LineId Id="32" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

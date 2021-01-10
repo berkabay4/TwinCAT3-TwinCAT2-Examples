@@ -1,0 +1,811 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcMDProject Version="1.4.0.0">
+	<GUID>d733b802-2808-4f8d-91a2-58d18d1e0e34</GUID>
+	<ProjectName>TwinCAT Motion Designer Project2</ProjectName>
+	<Description>TwinCAT Motion Designer Project2</Description>
+	<ResourceFiles />
+	<ReportExtension />
+	<DClinks>
+		<TcMDDClink Version="1.4.0.0">
+			<GUID>dd8622a2-2213-41dc-b5ac-4aee84d38d28</GUID>
+			<Name>DC link 1</Name>
+			<Properties>
+				<Name>Properties</Name>
+				<Parameter>
+					<PropertyName>UMain</PropertyName>
+					<Value>
+						<FloatingNumberNode>
+							<Content>400</Content>
+						</FloatingNumberNode>
+					</Value>
+					<Unit>V</Unit>
+				</Parameter>
+				<Parameter>
+					<PropertyName>PowerSupplyType</PropertyName>
+					<Value>AC3PH</Value>
+				</Parameter>
+				<Parameter>
+					<PropertyName>DriveGroup</PropertyName>
+					<Value>AX8000</Value>
+				</Parameter>
+				<Parameter>
+					<PropertyName>VoltageTolerance</PropertyName>
+					<Value>
+						<FloatingNumberNode>
+							<Content>0.05</Content>
+						</FloatingNumberNode>
+					</Value>
+					<Unit />
+				</Parameter>
+				<Parameter>
+					<PropertyName>ChopperThreshold</PropertyName>
+					<Value>
+						<FloatingNumberNode>
+							<Content>840</Content>
+						</FloatingNumberNode>
+					</Value>
+					<Unit>V</Unit>
+				</Parameter>
+				<Parameter>
+					<PropertyName>BrakeResistanceOption</PropertyName>
+					<Value>BrakeResIntern</Value>
+				</Parameter>
+			</Properties>
+			<Axes>
+				<TcMDAxis Version="1.4.0.0">
+					<GUID>36a81df1-668c-473e-8b29-5b685c84ac96</GUID>
+					<Name>Axis 1</Name>
+					<OverallGearRatio>1*3</OverallGearRatio>
+					<Feedconstant>1/(1*3)*(0.01*1000)</Feedconstant>
+					<LoadcaseBlock>
+						<SpindleDriveLoadcase Configuration="1">
+							<Name />
+							<Parameter>
+								<PropertyName>ThreadLead</PropertyName>
+								<Value>
+									<FloatingNumberNode>
+										<Content>10</Content>
+									</FloatingNumberNode>
+								</Value>
+								<Unit>mm</Unit>
+							</Parameter>
+							<Parameter>
+								<PropertyName>InertiaSpindle</PropertyName>
+								<Value>
+									<FloatingNumberNode>
+										<Content>1.32</Content>
+									</FloatingNumberNode>
+								</Value>
+								<Unit>kgcm²</Unit>
+							</Parameter>
+							<Parameter>
+								<PropertyName>MassLoad</PropertyName>
+								<Value>
+									<IntegerNumberNode>
+										<Content>1000</Content>
+									</IntegerNumberNode>
+								</Value>
+								<Unit>kg</Unit>
+							</Parameter>
+							<Parameter>
+								<PropertyName>Inclination</PropertyName>
+								<Value>
+									<FloatingNumberNode>
+										<Content>0</Content>
+									</FloatingNumberNode>
+								</Value>
+								<Unit>°</Unit>
+							</Parameter>
+							<Parameter>
+								<PropertyName>CounterMass</PropertyName>
+								<Value>
+									<FloatingNumberNode>
+										<Content>0</Content>
+									</FloatingNumberNode>
+								</Value>
+								<Unit>kg</Unit>
+							</Parameter>
+							<Parameter>
+								<PropertyName>CounterMassForce</PropertyName>
+								<Value>
+									<FloatingNumberNode>
+										<Content>0</Content>
+									</FloatingNumberNode>
+								</Value>
+								<Unit>N</Unit>
+							</Parameter>
+							<Parameter>
+								<PropertyName>FrictionCoefficient</PropertyName>
+								<Value>
+									<IntegerNumberNode>
+										<Content>0</Content>
+									</IntegerNumberNode>
+								</Value>
+								<Unit />
+							</Parameter>
+							<Parameter>
+								<PropertyName>Efficiency</PropertyName>
+								<Value>
+									<IntegerNumberNode>
+										<Content>85</Content>
+									</IntegerNumberNode>
+								</Value>
+								<Unit>%</Unit>
+							</Parameter>
+							<Parameter>
+								<PropertyName>Gravitation</PropertyName>
+								<Value>
+									<FloatingNumberNode>
+										<Content>9.81</Content>
+									</FloatingNumberNode>
+								</Value>
+								<Unit>m/s²</Unit>
+							</Parameter>
+							<Parameter>
+								<PropertyName>TorqueNoLoadRunning</PropertyName>
+								<Value>
+									<FloatingNumberNode>
+										<Content>0.05</Content>
+									</FloatingNumberNode>
+								</Value>
+								<Unit>Nm</Unit>
+							</Parameter>
+						</SpindleDriveLoadcase>
+					</LoadcaseBlock>
+					<TrajectoryBlock>
+						<Name>Trajectory</Name>
+						<Parameter>
+							<PropertyName>InitialValue</PropertyName>
+							<Value>
+								<FloatingNumberNode>
+									<Content>0</Content>
+								</FloatingNumberNode>
+							</Value>
+							<Unit>mm</Unit>
+						</Parameter>
+						<Sections>
+							<HalfRule GroupType="H2HPosDur">
+								<Name>Motion section</Name>
+								<Parameter>
+									<PropertyName>PositionMode</PropertyName>
+									<Value>Relative</Value>
+								</Parameter>
+								<Parameter>
+									<PropertyName>Position</PropertyName>
+									<Value>
+										<FloatingNumberNode>
+											<Content>100</Content>
+										</FloatingNumberNode>
+									</Value>
+									<Unit>mm</Unit>
+								</Parameter>
+								<Parameter>
+									<PropertyName>Duration</PropertyName>
+									<Value>
+										<FloatingNumberNode>
+											<Content>1</Content>
+										</FloatingNumberNode>
+									</Value>
+									<Unit>s</Unit>
+								</Parameter>
+							</HalfRule>
+							<HalfRule GroupType="H2HPosDur">
+								<Name>Motion section</Name>
+								<Parameter>
+									<PropertyName>PositionMode</PropertyName>
+									<Value>Relative</Value>
+								</Parameter>
+								<Parameter>
+									<PropertyName>Position</PropertyName>
+									<Value>
+										<NegationNode>
+											<Content>neg</Content>
+											<IntegerNumberNode>
+												<Content>50</Content>
+											</IntegerNumberNode>
+										</NegationNode>
+									</Value>
+									<Unit>mm</Unit>
+								</Parameter>
+								<Parameter>
+									<PropertyName>Duration</PropertyName>
+									<Value>
+										<FloatingNumberNode>
+											<Content>1</Content>
+										</FloatingNumberNode>
+									</Value>
+									<Unit>s</Unit>
+								</Parameter>
+							</HalfRule>
+							<HalfRule GroupType="H2HPosDur">
+								<Name>Motion section</Name>
+								<Parameter>
+									<PropertyName>PositionMode</PropertyName>
+									<Value>Relative</Value>
+								</Parameter>
+								<Parameter>
+									<PropertyName>Position</PropertyName>
+									<Value>
+										<IntegerNumberNode>
+											<Content>0</Content>
+										</IntegerNumberNode>
+									</Value>
+									<Unit>mm</Unit>
+								</Parameter>
+								<Parameter>
+									<PropertyName>Duration</PropertyName>
+									<Value>
+										<FloatingNumberNode>
+											<Content>0.5</Content>
+										</FloatingNumberNode>
+									</Value>
+									<Unit>s</Unit>
+								</Parameter>
+							</HalfRule>
+						</Sections>
+					</TrajectoryBlock>
+					<ForceBlock>
+						<Name>ForceGenerator</Name>
+						<Sections />
+					</ForceBlock>
+					<MassBlock>
+						<Name>MassGenerator</Name>
+						<Sections />
+					</MassBlock>
+					<MotorAddData>
+						<OrderCode>AM8032-xExx-0000</OrderCode>
+						<UniqueOrderCode>AM8032-0E10-0000</UniqueOrderCode>
+						<OrderCodeConfiguration>
+							<Name>OrderCode</Name>
+							<Parameter>
+								<PropertyName>ShaftDefinition</PropertyName>
+								<Value>NotDefined</Value>
+							</Parameter>
+							<Parameter>
+								<PropertyName>FeedbackSystem</PropertyName>
+								<Value>NotDefined</Value>
+							</Parameter>
+							<Parameter>
+								<PropertyName>BrakingOption</PropertyName>
+								<Value>NotDefined</Value>
+							</Parameter>
+						</OrderCodeConfiguration>
+					</MotorAddData>
+					<Gearbox>
+						<OrderCode>AG2300-+SP060S-MF1-3-xC1-AM803x</OrderCode>
+						<UniqueOrderCode>AG2300-+SP060S-MF1-3-xC1-AM803x</UniqueOrderCode>
+						<OrderCodeConfiguration>
+							<Name>OrderCode</Name>
+							<Parameter>
+								<PropertyName>ShaftDefinition</PropertyName>
+								<Value>NotDefined</Value>
+							</Parameter>
+						</OrderCodeConfiguration>
+					</Gearbox>
+					<Drive>
+						<OrderCode>AX8108-0x00-0000</OrderCode>
+						<UniqueOrderCode>AX8108-0x00-0000</UniqueOrderCode>
+						<OrderCodeConfiguration>
+							<Name>OrderCode</Name>
+							<Parameter>
+								<PropertyName>SafetyOption</PropertyName>
+								<Value>NotDefined</Value>
+							</Parameter>
+						</OrderCodeConfiguration>
+					</Drive>
+					<MotorGearboxFilter>
+						<IsOptimizerActive>false</IsOptimizerActive>
+						<IsGearboxUsed>true</IsGearboxUsed>
+						<NomSafetyFactor>1</NomSafetyFactor>
+						<MaxSafetyFactor>1</MaxSafetyFactor>
+						<GearboxFilter>
+							<SuitableGearboxesOnly>false</SuitableGearboxesOnly>
+							<ShowDeprecatedGearboxes>false</ShowDeprecatedGearboxes>
+							<DesignType>3</DesignType>
+							<OutputGeometry>3</OutputGeometry>
+							<VelocityUtilizationWeight>0</VelocityUtilizationWeight>
+							<VelocityUtilizationValue>0.7</VelocityUtilizationValue>
+							<TorqueUtilizationWeight>0</TorqueUtilizationWeight>
+							<TorqueUtilizationValue>0.7</TorqueUtilizationValue>
+							<VendorFilter>
+								<Element>Beckhoff Automation GmbH &amp; Co. KG</Element>
+								<Children>
+									<Child>
+										<Element>AG2210-+LP</Element>
+										<Children>
+											<Child>
+												<Element>AG2210-+LP120</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2210-+LP155</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2210-+LP50</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2210-+LP70</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2210-+LP90</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AG2250-+PLE</Element>
+										<Children>
+											<Child>
+												<Element>AG2250-+PLE40</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2250-+PLE60</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2250-+PLE80</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AG2250-+WPLE</Element>
+										<Children>
+											<Child>
+												<Element>AG2250-+WPLE40</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2250-+WPLE60</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2250-+WPLE80</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AG2300-+SP</Element>
+										<Children>
+											<Child>
+												<Element>AG2300-+SP100</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2300-+SP140</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2300-+SP180</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2300-+SP210</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2300-+SP240</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2300-+SP60</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2300-+SP75</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AG2800-+HDV</Element>
+										<Children>
+											<Child>
+												<Element>AG2800-+HDV15</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2800-+HDV25</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG2800-+HDV35</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AG3210-+NP</Element>
+										<Children>
+											<Child>
+												<Element>AG3210-+NP005</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3210-+NP015</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3210-+NP025</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3210-+NP035</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3210-+NP045</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AG3300-+NPS</Element>
+										<Children>
+											<Child>
+												<Element>AG3300-+NPS015</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3300-+NPS025</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3300-+NPS035</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3300-+NPS045</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AG3400-+NPT</Element>
+										<Children>
+											<Child>
+												<Element>AG3400-+NPT005</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3400-+NPT015</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3400-+NPT025</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3400-+NPT035</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AG3400-+NPT045</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+								</Children>
+							</VendorFilter>
+							<StageRatioFilter>
+								<Element>1</Element>
+								<Children>
+									<Child>
+										<Element>3</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>4</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>5</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>7</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>10</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>8</Element>
+										<Children />
+									</Child>
+								</Children>
+							</StageRatioFilter>
+							<StageRatioFilter>
+								<Element>2</Element>
+								<Children>
+									<Child>
+										<Element>9</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>12</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>15</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>16</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>20</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>25</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>30</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>35</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>40</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>70</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>100</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>50</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>32</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>64</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>28</Element>
+										<Children />
+									</Child>
+								</Children>
+							</StageRatioFilter>
+							<StageRatioFilter>
+								<Element>3</Element>
+								<Children>
+									<Child>
+										<Element>60</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>80</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>100</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>120</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>160</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>200</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>256</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>320</Element>
+										<Children />
+									</Child>
+									<Child>
+										<Element>512</Element>
+										<Children />
+									</Child>
+								</Children>
+							</StageRatioFilter>
+						</GearboxFilter>
+						<MotorFilter>
+							<SuitableMotorsOnly>false</SuitableMotorsOnly>
+							<GearboxFit>false</GearboxFit>
+							<HygienicDesignNeeded>false</HygienicDesignNeeded>
+							<FanAllowed>false</FanAllowed>
+							<WithBrake>false</WithBrake>
+							<Force400VMotors>false</Force400VMotors>
+							<SelectedFeedbacks>199687</SelectedFeedbacks>
+							<SelectedShafts>63</SelectedShafts>
+							<VelocityUtilizationWeight>0</VelocityUtilizationWeight>
+							<VelocityUtilizationValue>0.7</VelocityUtilizationValue>
+							<TorqueUtilizationWeight>0</TorqueUtilizationWeight>
+							<TorqueUtilizationValue>0.7</TorqueUtilizationValue>
+							<InertiaRatioWeight>0</InertiaRatioWeight>
+							<InertiaRatioValue>1</InertiaRatioValue>
+							<PowerWeight>0</PowerWeight>
+							<PriceWeight>0</PriceWeight>
+							<VendorFilter>
+								<Element>Beckhoff Automation GmbH &amp; Co. KG</Element>
+								<Children>
+									<Child>
+										<Element>AM80xx</Element>
+										<Children>
+											<Child>
+												<Element>AM801x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM802x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM803x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM804x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM805x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM806x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM807x</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AM81xx</Element>
+										<Children>
+											<Child>
+												<Element>AM811x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM812x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM813x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM814x</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AM85xx</Element>
+										<Children>
+											<Child>
+												<Element>AM853x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM854x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM855x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM856x</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+									<Child>
+										<Element>AM88xx</Element>
+										<Children>
+											<Child>
+												<Element>AM883x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM884x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM885x</Element>
+												<Children />
+											</Child>
+											<Child>
+												<Element>AM886x</Element>
+												<Children />
+											</Child>
+										</Children>
+									</Child>
+								</Children>
+							</VendorFilter>
+						</MotorFilter>
+					</MotorGearboxFilter>
+					<EmergencyBrakeParameter>
+						<Name>EmergencyProperties</Name>
+						<Parameter>
+							<PropertyName>EmergencyTorque</PropertyName>
+							<Value>
+								<FloatingNumberNode>
+									<Content>0</Content>
+								</FloatingNumberNode>
+							</Value>
+							<Unit>Nm</Unit>
+						</Parameter>
+					</EmergencyBrakeParameter>
+				</TcMDAxis>
+			</Axes>
+			<AxisModules>
+				<Axis>
+					<DriveModule>
+						<OrderCode>AX8108-0x00-0000</OrderCode>
+						<UniqueOrderCode>AX8108-0x00-0000</UniqueOrderCode>
+						<OrderCodeConfiguration>
+							<Name>OrderCode</Name>
+							<Parameter>
+								<PropertyName>SafetyOption</PropertyName>
+								<Value>NotDefined</Value>
+							</Parameter>
+						</OrderCodeConfiguration>
+					</DriveModule>
+					<Channels>
+						<Channel>
+							<ChannelIdx>0</ChannelIdx>
+							<Name>Axis 1</Name>
+							<GUID>36a81df1-668c-473e-8b29-5b685c84ac96</GUID>
+						</Channel>
+					</Channels>
+				</Axis>
+			</AxisModules>
+		</TcMDDClink>
+	</DClinks>
+	<Customer>
+		<Name />
+		<Company />
+		<Department />
+		<Street />
+		<ZipCode />
+		<City />
+		<Country />
+		<Telephone />
+		<Email />
+	</Customer>
+	<User>
+		<Name />
+		<Company />
+		<Department />
+		<Street />
+		<ZipCode />
+		<City />
+		<Country />
+		<Telephone />
+		<Email />
+	</User>
+</TcMDProject>

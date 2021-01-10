@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_AxisIN" Id="{69f5b799-9dd8-4033-89eb-247b477d9917}">
+    <Declaration><![CDATA[TYPE ST_AxisIN :
+STRUCT
+	
+bPowerEnable	:	BOOL;
+
+nOverride	:	UDINT;
+
+bStopEnable	:	BOOL;
+
+bReset	:	BOOL;
+
+bMoveAbs	:	BOOL;
+fVelo	:	LREAL;
+fPosition	:	LREAL;
+
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="MAIN" Id="{a0819e9f-1b94-459a-aa9c-6ceadcc5e965}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	fbReadInputs: FB_MBReadInputs;
+	DataReadInput	:	BYTE;
+	bRead	:	BOOL;
+	
+	binput1		AT%IX0.0	:	BOOL;
+	binput2		AT%IX0.1	:	BOOL;
+	binput3		AT%IX0.2	:	BOOL;
+	binput4		AT%IX0.3	:	BOOL;
+	binput5		AT%IX0.4	:	BOOL;
+	binput6		AT%IX0.5	:	BOOL;
+	binput7		AT%IX0.6	:	BOOL;
+	binput8		AT%IX0.7	:	BOOL;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbReadInputs(
+	sIPAddr:='', 
+	nTCPPort:= 502, 
+	nUnitID:= 255, 
+	nQuantity:= 8, 
+	nMBAddr:=0, 
+	cbLength:= SIZEOF(DataReadInput), 
+	pDestAddr:= ADR(DataReadInput) , 
+	bExecute:= bRead, 
+	tTimeout:= T#5S, 
+	bBusy=> , 
+	bError=> , 
+	nErrId=> , 
+	cbRead=> );
+	
+	DataReadInput.0;		DataReadInput.1;		DataReadInput.2;		DataReadInput.3;		DataReadInput.4;
+	DataReadInput.5;		DataReadInput.6;		DataReadInput.7;		DataReadInput.8;]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="8" Count="12" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="38" Count="1" />
+      <LineId Id="42" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

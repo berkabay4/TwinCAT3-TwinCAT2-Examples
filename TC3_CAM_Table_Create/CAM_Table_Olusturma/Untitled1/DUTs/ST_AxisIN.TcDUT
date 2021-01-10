@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_AxisIN" Id="{6aea9bc0-1f3b-4bca-b199-c2089a07b8f2}">
+    <Declaration><![CDATA[TYPE ST_AxisIN :
+STRUCT
+	
+
+bPower			:	BOOL;
+nOverride		:	INT;
+
+bAbs			:	BOOL;
+fVelocity		:	LREAL;
+fPos			:	LREAL;
+            	
+bCamIN			:	BOOL;
+nCamTableID		:	UDINT;
+bCamOUT			:	BOOL;
+            	
+bStop			:	BOOL;
+            	
+bReset			:	BOOL;
+            	
+bRead			:	BOOL;
+            	
+bWrite			:	BOOL;
+nCamTableIdWr	:	UDINT;
+
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

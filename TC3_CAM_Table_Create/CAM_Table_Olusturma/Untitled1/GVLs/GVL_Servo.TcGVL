@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <GVL Name="GVL_Servo" Id="{7126e137-6688-427c-9bca-e2db687190ff}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	
+Axis1			:	AXIS_REF;
+Axis2			:	AXIS_REF;
+
+CAMTABLE		:	MC_CAM_REF;
+
+AxisInterface1	:	ST_AxisInterface;
+
+FB_Servo1		: FB_Servo;	
+
+
+FB_Servo2		: FB_Servo;
+AxisInterface2	: ST_AxisInterface;
+
+MotionFunction	:	ARRAY [1..7] OF MC_MotionFunctionPoint;
+
+arrSlavePos		: ARRAY[1..7]OF LREAL;
+arrMasterPos	: ARRAY[1..7]OF LREAL;
+	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

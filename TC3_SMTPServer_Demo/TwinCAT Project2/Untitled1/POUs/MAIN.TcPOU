@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="MAIN" Id="{0d58fda5-16fd-46e3-bcbd-087c07592ec4}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	fbmail: FB_SmtpV3;
+	sMsg	:	STRING :=	'Deneme-1';
+	bSend: BOOL;
+	bBusy: BOOL;
+	bErr: BOOL;
+	fbmail_att: FB_SmtpV3_Full;
+	
+	bSendFull	:	BOOL;
+	bBusyFull	:	BOOL;
+	bErrFull	:	BOOL;
+	
+	sMsgFull	:	STRING	:=	'Dosya ektedir.';
+	sAtt	:	ARRAY[0..32] OF STRING;
+	
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbmail(
+	sNetId:='' , 
+	sSmtpServer:='smtp.gmail.com' , 
+	sUsername:= '*******@gmail.com', 			//Mail atmak için kullanılacak mailin adresi
+	sPassword:= '***********', 					//Mail atmak için kullanılacak mailin şifresi
+	nEncryption:= 2, 
+	sFrom:= '**********@gmail.com', 			//Mail atmak için kullanılacak mailin adresi
+	sTo:= '************@gmail.com', 			//Maili alacak kullanıcının mail adresi
+	sCc:= , 
+	sBcc:= , 
+	sSubject:= 'Deneme_TC3_SMTP', 
+	pMessage:= ADR(sMsg), 
+	cbMessage:=SIZEOF(sMsg) , 
+	bExecute:=bSend , 
+	tTimeout:=T#2S , 
+	bBusy=>bBusy , 
+	bError=>bErr , 
+	nErrId=> );
+	
+
+	sAtt[0] :=	'C:\Users\Berkay ABAY\Desktop\Beckhoff_Staj\\SMTP_server\Att\deneme.txt';
+	
+	
+	fbmail_att(
+	sNetId:='' , 
+	sSmtpServer:='smtp.gmail.com' , 
+	sUsername:= '*********@gmail.com', 		//Mail atmak için kullanılacak mailin adresi		
+	sPassword:= '*********', 				//Mail atmak için kullanılacak mailin şifresi
+	nEncryption:= 2,                        
+	sFrom:= '***********@gmail.com',        //Mail atmak için kullanılacak mailin adresi
+	sTo:= '*************@gmail.com',        //Maili alacak kullanıcının mail adresi
+	sCc:= ,                                 
+	sBcc:= , 
+	sDispositionNotification:= , 
+	sReturnReceipt:= , 
+	nPriority:= 1, 
+	nSensitivity:= , 
+	nPort:= , 
+	nContentType:=2 , 
+	sSubject:=sMsgFull , 
+	pMessage:=ADR(sMsgFull) , 
+	cbMessage:= SIZEOF(sMsgFull), 
+	sAttachments:= sAtt, 
+	bExecute:= bSendFull, 
+	tTimeout:=T#2S , 
+	bBusy=> bBusyFull, 
+	bError=> bErrFull, 
+	nErrId=> );
+	
+	
+	
+	IF NOT bErr AND NOT bBusy AND bSend THEN
+		bSend:=FALSE;
+	END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="7" Count="16" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="33" Count="1" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="63" Count="7" />
+      <LineId Id="48" Count="14" />
+      <LineId Id="35" Count="2" />
+      <LineId Id="28" Count="1" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="31" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
