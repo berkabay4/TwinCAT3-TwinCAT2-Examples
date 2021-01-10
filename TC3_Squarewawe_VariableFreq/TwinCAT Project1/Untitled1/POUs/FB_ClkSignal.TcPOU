@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_ClkSignal" Id="{1edbf3d5-4efa-4dbc-818b-92073eaa5b06}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ClkSignal
+VAR_INPUT
+	IN_bStart: BOOL;
+	IN_fFrequency: REAL;
+END_VAR
+VAR_OUTPUT
+	OUT_Signal: BOOL;
+END_VAR
+VAR
+	nState: INT;
+	TON1: TON;
+	TON2: TON;
+	tTime: TIME;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[tTime := REAL_TO_TIME(1/IN_fFrequency);
+
+CASE nState OF
+	
+0:
+
+	IF IN_bStart THEN
+		
+		nState := 10;
+		
+	END_IF
+
+10:
+
+	TON1(IN:= TRUE , PT:= tTime , Q=> , ET=> );	
+	OUT_Signal	:=	FALSE;
+	
+	IF TON1.Q THEN
+
+		nState	:= 20;	
+		TON1(IN:=FALSE);
+
+	END_IF
+	
+20:
+
+	TON2(IN:= TRUE , PT:=tTime , Q=> , ET=> );
+	OUT_Signal	:=	TRUE;
+	
+	IF TON2.Q THEN
+
+		nState	:= 0;	
+		TON2(IN:=FALSE);
+		
+	END_IF
+
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ClkSignal">
+      <LineId Id="10" Count="35" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

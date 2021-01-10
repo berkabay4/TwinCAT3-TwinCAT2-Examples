@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <DUT Name="INPUT" Id="{af868f5b-6a1c-42dd-b520-4cbef21138cb}">
+    <Declaration><![CDATA[TYPE INPUT :
+STRUCT
+	
+
+	bStart 		:	BOOL;	//S1 Butonu , NO
+	
+	bUpSwitch 	:	BOOL;	//ÜÖN , NC
+	
+	bSwitchA	:	BOOL;	// A anahtarı, NO
+	bSwitchB	:	BOOL;	// B anahtarı , NC
+	bSwitchC	:	BOOL;	// C anahtarı , NO
+	
+	
+
+
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="MAIN" Id="{b1e4c4d8-fc6f-41a6-9419-ff9372b5a71d}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	FB_Control1: FB_Control;
+	FB_Motion1: FB_Motion;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+FB_Control1(button1:=binput1 , ProcessDone:=main.FB_Motion1.bDone , ProgEx=> );
+
+FB_Motion1(
+	bStart:=binput1 , 
+	bExecute:=main.FB_Control1.ProgEx , 
+	bBusy=> , 
+	bDone=> , 
+	nPosition:=main.FB_Control1.position , 
+	);]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="12" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="34" Count="5" />
+      <LineId Id="15" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

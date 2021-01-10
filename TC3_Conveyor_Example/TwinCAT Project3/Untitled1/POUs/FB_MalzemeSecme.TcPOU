@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_MalzemeSecme" Id="{8e663e0a-af29-4c9f-901d-da0bace0c49c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_MalzemeSecme
+VAR_INPUT
+	nValue: INT;
+END_VAR
+VAR_OUTPUT
+	nStateOut: INT;
+	sMsg: STRING;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+IF nValue >= 0 AND nValue <=40 THEN
+	
+	sMsg := 'Malzeme Kısa Boyutlu.';
+	
+	nStateOut := 32;
+	
+ELSIF nValue >40 AND nValue <= 70 THEN
+
+	sMsg := 'Malzeme Orta Boyutlu.';
+	nStateOut := 34;
+	
+ELSIF nValue > 70 AND nValue <=100 THEN
+		
+	sMsg := 'Malzeme Uzun Boyutlu.';
+	nStateOut := 36;	
+	
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_MalzemeSecme">
+      <LineId Id="10" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="44" Count="1" />
+      <LineId Id="41" Count="1" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

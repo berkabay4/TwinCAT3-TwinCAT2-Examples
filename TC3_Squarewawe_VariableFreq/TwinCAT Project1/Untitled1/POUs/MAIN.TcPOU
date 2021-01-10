@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="MAIN" Id="{cfae907d-2971-42a4-b8bc-d377595e7a12}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	FB_ClkSignal_1	:	FB_ClkSignal;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FB_ClkSignal_1(IN_bStart:= , IN_fFrequency:=0.001 , OUT_Signal=> );]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

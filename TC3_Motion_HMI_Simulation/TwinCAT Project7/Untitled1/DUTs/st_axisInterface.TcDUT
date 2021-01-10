@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <DUT Name="st_axisInterface" Id="{d1c9713d-527d-4e04-a57a-34a4baabdec2}">
+    <Declaration><![CDATA[TYPE st_axisInterface :
+STRUCT
+	
+
+IN	:	st_axisInput;
+OUT	:	st_axisOutput;
+
+
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

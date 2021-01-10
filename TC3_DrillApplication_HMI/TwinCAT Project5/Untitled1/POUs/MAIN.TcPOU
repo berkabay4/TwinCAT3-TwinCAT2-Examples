@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="MAIN" Id="{536253be-ada7-4d6d-a05b-554eeb256f50}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	
+	Drill	:	DataDrill;
+	Drill2	:	DataDrill;
+
+	nState: INT;
+	ftrigA: F_TRIG;
+	
+	rtrigA: R_TRIG;
+	
+	ftrigB: F_TRIG;
+	ftrigUON: F_TRIG;
+	
+	fDrillY: REAL;
+	C: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+C	:=	NOT(Drill.IN.bSwitchC);
+
+ACT_MatkapUygulamasi();
+ACT_Visu();]]></ST>
+    </Implementation>
+    <Action Name="ACT_MatkapUygulamasi" Id="{c679b45d-7911-4797-9d2e-c2916cb9a363}">
+      <Implementation>
+        <ST><![CDATA[
+rtrigA(CLK:= Drill.IN.bSwitchA , Q=> );
+ftrigA(CLK:= Drill.IN.bSwitchA , Q=> );
+
+
+ftrigB(CLK:= Drill.IN.bSwitchB , Q=> );
+ftrigUON(CLK:= Drill.IN.bUpSwitch , Q=> );
+
+
+
+CASE nState OF
+	
+
+	0:
+	
+		Drill.OUT.bDown	:=	FALSE;
+		Drill.OUT.bUp	:=	FALSE;
+	
+		IF Drill.IN.bStart AND 
+		NOT Drill.IN.bUpSwitch AND
+		 Drill.IN.bSwitchC	THEN
+		 
+			nState := 10;
+		
+		END_IF
+	
+		
+	10:
+		
+		Drill.OUT.bDown	:=	TRUE;
+		
+		IF rtrigA.Q AND Drill.IN.bSwitchC THEN
+			
+			nState := 20;
+			
+		ELSIF NOT Drill.IN.bSwitchC THEN
+			
+			nState := 999;
+			
+		END_IF
+	
+		
+	20:	
+	
+		Drill.OUT.bDrill	:=	TRUE;
+		
+		
+		IF ftrigB.Q AND Drill.IN.bSwitchC THEN
+			
+			nState := 30;
+			
+		ELSIF NOT Drill.IN.bSwitchC THEN
+			
+			nState := 999;
+			
+		END_IF	
+	
+	30:
+	
+		Drill.OUT.bDown	:=	FALSE;
+		Drill.OUT.bUp	:=	TRUE;
+	
+		IF ftrigA.Q  AND Drill.IN.bSwitchC THEN 
+
+			nState := 40;
+			
+		ELSIF NOT Drill.IN.bSwitchC THEN
+		
+			nState := 999;
+			
+		END_IF
+		
+	40:
+	
+		Drill.OUT.bDrill	:=	FALSE;
+
+		IF ftrigUON.Q THEN
+			
+		Drill.OUT.bDown	:=	FALSE;
+		Drill.OUT.bUp	:=	FALSE;
+		
+			nState := 0;
+			
+		END_IF
+	
+
+END_CASE
+
+
+
+	IF NOT Drill.IN.bStart	THEN  
+			 
+		nState := 0;
+		Drill.OUT.bDown	:=	FALSE;
+		Drill.OUT.bUp	:=	FALSE;		
+		Drill.OUT.bDrill	:=	FALSE;
+	
+	END_IF
+]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_Visu" Id="{505970fd-13c2-471c-9c6b-051a6fa818f2}">
+      <Implementation>
+        <ST><![CDATA[
+
+//50-225
+
+IF Drill.OUT.bDown AND NOT Drill.OUT.bUp THEN
+	
+	fDrillY	:=	fDrillY + 0.5;
+	
+	IF fDrillY	>=	100 AND NOT Drill.OUT.bDrill THEN
+		fDrillY	:=	100;
+	
+	
+	ELSIF Drill.OUT.bDrill THEN
+	
+		fDrillY	:=	fDrillY + 0.3;
+		
+	IF fDrillY	>=	200	THEN
+		
+		fDrillY	:=	200;
+		
+	END_IF
+	
+	END_IF
+	
+
+	
+ELSIF Drill.OUT.bUp AND NOT Drill.OUT.bDown AND Drill.OUT.bDrill THEN
+	
+	fDrillY	:=	fDrillY	-	0.3;
+	
+	IF fDrillY	<=	50	THEN
+		fDrillY	:=	50;
+	END_IF	
+
+ELSIF Drill.OUT.bUp AND NOT Drill.OUT.bDown AND NOT Drill.OUT.bDrill THEN
+	
+	fDrillY	:=	fDrillY	-	0.5;
+	
+	IF fDrillY	<=	20	THEN
+		
+		fDrillY	:=	20;
+		
+	END_IF	
+	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="MAIN">
+      <LineId Id="25" Count="1" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="24" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_MatkapUygulamasi">
+      <LineId Id="2" Count="1" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="4" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="99" Count="3" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="18" Count="2" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="22" Count="1" />
+      <LineId Id="34" Count="1" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="46" Count="1" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="51" Count="7" />
+      <LineId Id="24" Count="2" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="63" Count="1" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="67" Count="1" />
+      <LineId Id="83" Count="1" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="94" Count="1" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="104" Count="2" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="111" Count="1" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="116" Count="1" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="103" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_Visu">
+      <LineId Id="2" Count="3" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="8" Count="3" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="41" Count="1" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="15" Count="3" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="49" Count="2" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="46" Count="1" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

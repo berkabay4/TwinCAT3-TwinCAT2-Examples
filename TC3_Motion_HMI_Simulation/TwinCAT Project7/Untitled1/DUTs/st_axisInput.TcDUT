@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <DUT Name="st_axisInput" Id="{954485a3-d372-4322-a9fa-8d20aee57fd6}">
+    <Declaration><![CDATA[TYPE st_axisInput :
+STRUCT
+	
+
+	bPowerEnable	:	BOOL;
+	bMoveAbs		:	BOOL;
+	bStop			:	BOOL;
+	bReset			:	BOOL;
+	
+	
+	fOverride	:	LREAL;
+	fPosition	:	LREAL;
+	fVelocity	:	LREAL;
+
+	
+	
+	
+
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

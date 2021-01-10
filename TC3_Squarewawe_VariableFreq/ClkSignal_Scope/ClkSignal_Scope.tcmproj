@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{85f86f18-3d96-4785-a657-003e6855e0f4}</ProjectGuid>
+    <AssemblyName>ClkSignal_Scope</AssemblyName>
+    <Name>ClkSignal_Scope</Name>
+    <RootNamespace>ClkSignal_Scope</RootNamespace>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="FUN_ITR" Id="{f309a4ca-9f43-4ec4-892b-39abe8429e43}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION FUN_ITR : LREAL
+VAR_INPUT
+	N: INT;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FUN_ITR:= (INT_TO_LREAL(N)/32767)*200000;
+]]></ST>
+    </Implementation>
+    <LineIds Name="FUN_ITR">
+      <LineId Id="7" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

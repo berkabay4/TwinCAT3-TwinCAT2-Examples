@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="PWM" Id="{6e07600c-f476-4ae1-8f9c-980c015ead37}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK PWM
+VAR_INPUT
+	bVar: BOOL;
+		tTime: LTIME;
+
+END_VAR
+VAR_OUTPUT
+		Led1: BOOL;
+END_VAR
+VAR
+	nState: INT;
+	LTON1: LTON;
+	LTON2: LTON;
+	toplamT: LTIME;
+	realVal1: LREAL;
+	realVal2: LREAL;
+	newTime: LTIME;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[toplamT:=LTIME#200US;
+realVal1:=LTIME_TO_LREAL(tTime);
+realVal2:=LTIME_TO_LREAL(toplamT);
+
+newTime:=LREAL_TO_LTIME(realVal2-realVal1);
+
+CASE nState OF
+	
+0:
+	IF bVar THEN
+	
+		nState:=10;
+	
+	END_IF
+
+10:
+	
+	Led1:=TRUE;
+	LTON1(IN:=TRUE , PT:=tTime , Q=> , ET=> );
+	
+	IF Lton1.Q THEN
+
+		nState:=20;	
+		LTON1(IN:=FALSE);
+		
+	END_IF
+
+20:
+	
+	Led1:=FALSE;
+	LTON2(IN:=TRUE , PT:=newTime , Q=> , ET=> );
+	
+	IF Lton2.Q THEN
+
+		nState:=0;	
+		LTON2(IN:=FALSE);
+		
+	END_IF
+END_CASE
+
+	IF NOT(bVar) THEN
+
+		nState:=0;	
+		LTON2(IN:=FALSE);
+		LTON1(IN:=FALSE);
+
+	END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="PWM">
+      <LineId Id="95" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="15" Count="2" />
+      <LineId Id="28" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="31" Count="2" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="41" Count="1" />
+      <LineId Id="44" Count="1" />
+      <LineId Id="47" Count="2" />
+      <LineId Id="51" Count="5" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="58" Count="6" />
+      <LineId Id="57" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,403 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="MAIN" Id="{1f8f76ba-55d4-404a-8c87-3d73e978cf49}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	FbMotion1: Fb_Motion;
+	FbMotion2: Fb_Motion;
+	nState: INT;
+	bButon: BOOL;
+	T1: TON;
+	T2: TON;
+	T3: TON;
+	bResetButon	:	BOOL;
+	rtrig1: R_TRIG;
+	bCounter: BOOL;
+	nCounter: INT;
+	sMsgInfo: STRING;
+	sMsgVelo: STRING;
+	sMsgPosition: STRING;
+	fPositionVisu: LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+ACT_Motion();
+ACT_Visu();
+
+
+
+
+
+
+
+FbMotion1(Axis:=GVL_Axis.Axis1 , stAxis:=GVL_Axis.stAxis1 );
+//FbMotion2(Axis:=GVL_Axis.Axis2 , stAxis:=GVL_Axis.stAxis2 );]]></ST>
+    </Implementation>
+    <Action Name="ACT_Motion" Id="{875773c2-5290-4d02-a306-85f1c937bb1c}">
+      <Implementation>
+        <ST><![CDATA[
+
+rtrig1(CLK:=bCounter , Q=> );
+
+
+CASE nState OF
+	
+
+
+
+	0:
+	
+		IF bButon THEN
+			
+		GVL_Axis.stAxis1.IN.bPowerEnable	:=	TRUE;
+		GVL_Axis.stAxis1.IN.fOverride	:=	100.0;
+		GVL_Axis.stAxis1.IN.bStop	:=	FALSE;	
+		GVL_Axis.stAxis1.IN.bMoveAbs	:=	FALSE;
+		nState := 1;
+		
+		END_IF
+	
+		
+	1:
+		IF	bButon	
+		AND NOT GVL_Axis.stAxis1.OUT.bPowerErr
+		AND NOT GVL_Axis.stAxis1.OUT.bStopActive 
+		AND GVL_Axis.stAxis1.OUT.bPowerEnabled THEN
+		
+			nState := 10;
+			
+		END_IF
+	
+	
+	10:
+		
+		GVL_Axis.stAxis1.IN.fPosition	:=	5000;
+		GVL_Axis.stAxis1.IN.fVelocity	:=	650;
+		
+		GVL_Axis.stAxis1.IN.bMoveAbs	:=	TRUE;
+		
+		IF GVL_Axis.stAxis1.OUT.bMoveAbsBusy 
+		AND NOT GVL_Axis.stAxis1.OUT.bMoveAbsErr	THEN
+			
+			nState := 20;
+
+		ELSIF 	GVL_Axis.stAxis1.OUT.bMoveAbsErr 
+		OR GVL_Axis.stAxis1.OUT.bPowerErr THEN
+			
+			nState := 999;
+		
+		END_IF
+		
+	20:
+		sMsgInfo	:=	'Sistem Belirtilen Pozisyona Hareket Etmekte';
+		
+		IF GVL_Axis.stAxis1.OUT.bMoveAbsDone
+		AND NOT GVL_Axis.stAxis1.OUT.bMoveAbsErr THEN
+		
+			GVL_Axis.stAxis1.IN.bMoveAbs	:=	FALSE;	
+			nState := 30;
+		
+		ELSIF 	GVL_Axis.stAxis1.OUT.bMoveAbsErr 
+		OR GVL_Axis.stAxis1.OUT.bPowerErr THEN
+			
+		nState := 999;
+					
+		END_IF
+		
+	
+	30:
+		
+		sMsgInfo	:=	CONCAT(STR1:=TIME_TO_STRING(T1.ET) , STR2:='süredir bekleniyor.' );
+	
+		T1(IN:= TRUE, PT:=T#5S);
+		
+		IF T1.Q THEN
+			nState := 40;
+			T1(IN:= FALSE);
+		END_IF
+	
+	40:
+	
+	
+		GVL_Axis.stAxis1.IN.fPosition	:=	10000;
+		GVL_Axis.stAxis1.IN.fVelocity	:=	1000;
+		
+		GVL_Axis.stAxis1.IN.bMoveAbs	:=	TRUE;
+		
+		IF GVL_Axis.stAxis1.OUT.bMoveAbsBusy 
+		AND NOT GVL_Axis.stAxis1.OUT.bMoveAbsErr	THEN
+			
+			nState := 50;
+
+		ELSIF 	GVL_Axis.stAxis1.OUT.bMoveAbsErr 
+		OR GVL_Axis.stAxis1.OUT.bPowerErr THEN
+			
+			nState := 999;
+		
+		END_IF
+		
+	50:
+		sMsgInfo	:=	'Sistem Belirtilen Pozisyona Hareket Etmekte';
+
+		IF GVL_Axis.stAxis1.OUT.bMoveAbsDone
+		AND NOT GVL_Axis.stAxis1.OUT.bMoveAbsErr THEN
+		
+			GVL_Axis.stAxis1.IN.bMoveAbs	:=	FALSE;	
+			nState := 60;
+		
+		ELSIF 	GVL_Axis.stAxis1.OUT.bMoveAbsErr 
+		OR GVL_Axis.stAxis1.OUT.bPowerErr THEN
+			
+		nState := 999;
+					
+		END_IF
+	
+	
+	60:
+		sMsgInfo	:=	'Malzemeler Bekleniyor.';
+		IF rtrig1.Q THEN
+			nCounter := nCounter + 1;			
+		END_IF
+		IF nCounter >=6 THEN
+			nCounter := 0;
+			nState := 70;
+		END_IF
+		
+	70:
+		
+		GVL_Axis.stAxis1.IN.fPosition	:=	0;
+		GVL_Axis.stAxis1.IN.fVelocity	:=	2000;
+		
+		GVL_Axis.stAxis1.IN.bMoveAbs	:=	TRUE;
+		
+		IF GVL_Axis.stAxis1.OUT.bMoveAbsBusy 
+		AND NOT GVL_Axis.stAxis1.OUT.bMoveAbsErr	THEN
+			
+			nState := 80;
+
+		ELSIF 	GVL_Axis.stAxis1.OUT.bMoveAbsErr 
+		OR GVL_Axis.stAxis1.OUT.bPowerErr THEN
+			
+			nState := 999;
+		
+		END_IF
+	
+	
+	80:
+		sMsgInfo	:=	'Başlangıç Pozisyonuna Dönülüyor.';
+		
+		IF GVL_Axis.stAxis1.OUT.bMoveAbsDone
+		AND NOT GVL_Axis.stAxis1.OUT.bMoveAbsErr THEN
+		
+			GVL_Axis.stAxis1.IN.bMoveAbs	:=	FALSE;	
+			nState := 90;
+		
+		ELSIF 	GVL_Axis.stAxis1.OUT.bMoveAbsErr 
+		OR GVL_Axis.stAxis1.OUT.bPowerErr THEN
+			
+		nState := 999;
+					
+		END_IF
+		
+	90:
+		T3(IN:= TRUE, PT:=T#3S);
+		
+		IF T3.Q THEN
+			nState := 0;
+			T3(IN:= FALSE);
+		END_IF
+	
+
+		
+		
+	999:
+		GVL_Axis.stAxis1.IN.bReset	:=	TRUE;
+		
+		IF NOT	GVL_Axis.stAxis1.OUT.bResetErr 
+		AND GVL_Axis.stAxis1.OUT.bResetDone
+		AND bResetButon THEN
+	
+			nState := 0;
+		
+		ELSIF	GVL_Axis.stAxis1.OUT.bResetErr THEN
+			nState := 1000;
+		END_IF
+		
+		
+		
+END_CASE
+
+
+
+IF NOT bButon THEN
+	
+
+	sMsgInfo	:=	'Sistem Kapalı Durumda.';
+
+	T1(IN:= FALSE);
+	T2(IN:= FALSE);
+	T3(IN:= FALSE);
+	
+	GVL_Axis.stAxis1.IN.bStop	:=	TRUE;
+	
+	IF GVL_Axis.stAxis1.OUT.bStopDone
+	AND 	GVL_Axis.stAxis1.OUT.bStopActive
+	AND NOT	GVL_Axis.stAxis1.OUT.bMoveAbsErr
+	AND NOT GVL_Axis.stAxis1.OUT.bPowerErr	 THEN
+	
+			nState := 0;
+		
+			GVL_Axis.stAxis1.IN.bPowerEnable	:=	TRUE;
+			GVL_Axis.stAxis1.IN.fOverride	:=	100.0;
+			
+			GVL_Axis.stAxis1.IN.bStop	:=	FALSE;	
+	END_IF
+	
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_Visu" Id="{07620e5b-0f8b-4cbb-9964-3c2cf1401821}">
+      <Implementation>
+        <ST><![CDATA[
+
+sMsgVelo		:=	REAL_TO_STRING(GVL_Axis.Axis1.NcToPlc.ActVelo);
+sMsgPosition	:=	REAL_TO_STRING(GVL_Axis.Axis1.NcToPlc.ActPos);
+
+
+fPositionVisu	:=	GVL_Axis.Axis1.NcToPlc.ActPos/10;]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="MAIN">
+      <LineId Id="16" Count="0" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="18" Count="7" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_Motion">
+      <LineId Id="2" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="234" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="9" Count="3" />
+      <LineId Id="202" Count="1" />
+      <LineId Id="206" Count="1" />
+      <LineId Id="204" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="213" Count="0" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="211" Count="0" />
+      <LineId Id="205" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="209" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="30" Count="1" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="32" Count="2" />
+      <LineId Id="247" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="40" Count="1" />
+      <LineId Id="43" Count="2" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="57" Count="1" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="52" Count="1" />
+      <LineId Id="249" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="250" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="65" Count="1" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="71" Count="1" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="73" Count="1" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="251" Count="2" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="81" Count="1" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="84" Count="13" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="98" Count="3" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="254" Count="1" />
+      <LineId Id="106" Count="10" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="256" Count="0" />
+      <LineId Id="235" Count="2" />
+      <LineId Id="240" Count="1" />
+      <LineId Id="243" Count="0" />
+      <LineId Id="242" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="258" Count="0" />
+      <LineId Id="131" Count="15" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="259" Count="1" />
+      <LineId Id="153" Count="11" />
+      <LineId Id="166" Count="7" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="217" Count="1" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="225" Count="2" />
+      <LineId Id="232" Count="0" />
+      <LineId Id="224" Count="0" />
+      <LineId Id="219" Count="0" />
+      <LineId Id="228" Count="3" />
+      <LineId Id="220" Count="2" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="175" Count="2" />
+      <LineId Id="174" Count="0" />
+      <LineId Id="180" Count="0" />
+      <LineId Id="245" Count="1" />
+      <LineId Id="244" Count="0" />
+      <LineId Id="182" Count="4" />
+      <LineId Id="188" Count="1" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="190" Count="3" />
+      <LineId Id="199" Count="1" />
+      <LineId Id="198" Count="0" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="187" Count="0" />
+      <LineId Id="195" Count="1" />
+      <LineId Id="179" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_Visu">
+      <LineId Id="2" Count="1" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="4" Count="0" />
+      <LineId Id="6" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

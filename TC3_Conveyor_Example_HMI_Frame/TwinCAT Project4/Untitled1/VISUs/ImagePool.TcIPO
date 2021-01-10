@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <ImagePool Name="ImagePool" Id="{0e107448-2916-4806-ae94-e30450c70584}">
+    <XmlArchive>
+      <Data>
+        <o xml:space="preserve" t="ImagePoolObject">
+          <v n="UniqueIdGenerator">"8"</v>
+          <l n="BitmapPool" t="ArrayList" cet="ImagePoolItem">
+            <o>
+              <v n="BitmapID">"iconfinder_10_2135789"</v>
+              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|C:\Users\Berkay ABAY\Desktop\Projeler\PLC LAB\Beckhoff_Staj\TC3_MotionCAM_HMI_2\TwinCAT Project1\Untitled1\IMG\iconfinder_10_2135789.png"</v>
+              <v n="ItemID">2</v>
+            </o>
+            <o>
+              <v n="BitmapID">"iconfinder_42-web_essential_3401860"</v>
+              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|C:\Users\Berkay ABAY\Desktop\Projeler\PLC LAB\Beckhoff_Staj\TC3_MotionCAM_HMI_2\TwinCAT Project1\Untitled1\IMG\iconfinder_42-web_essential_3401860.png"</v>
+              <v n="ItemID">3</v>
+            </o>
+            <o>
+              <v n="BitmapID">"iconfinder_Streamline-18_185038"</v>
+              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|C:\Users\Berkay ABAY\Desktop\Projeler\PLC LAB\Beckhoff_Staj\TC3_MotionCAM_HMI_2\TwinCAT Project1\Untitled1\IMG\iconfinder_Streamline-18_185038.png"</v>
+              <v n="ItemID">4</v>
+            </o>
+            <o>
+              <v n="BitmapID">"kisspng-flag-of-turkey-translation-english-turkish-flag-turkey-5b0fd5c1052d90.3942198815277644170212"</v>
+              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|C:\Users\Berkay ABAY\Desktop\Projeler\PLC LAB\Beckhoff_Staj\TC3_MotionCAM_HMI_2\TwinCAT Project1\Untitled1\IMG\kisspng-flag-of-turkey-translation-english-turkish-flag-turkey-5b0fd5c1052d90.3942198815277644170212.png"</v>
+              <v n="ItemID">5</v>
+            </o>
+            <o>
+              <v n="BitmapID">"kisspng-logo-primera-air-organization-business-english-lan-british-flag-5b5e7d46540652.2018390615329191103442"</v>
+              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|C:\Users\Berkay ABAY\Desktop\Projeler\PLC LAB\Beckhoff_Staj\TC3_MotionCAM_HMI_2\TwinCAT Project1\Untitled1\IMG\kisspng-logo-primera-air-organization-business-english-lan-british-flag-5b5e7d46540652.2018390615329191103442.png"</v>
+              <v n="ItemID">6</v>
+            </o>
+            <o>
+              <v n="BitmapID">"indir-removebg-preview"</v>
+              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|C:\Users\Berkay ABAY\Desktop\Uzaktan Eğitim\Resimler\indir-removebg-preview.png"</v>
+              <v n="ItemID">7</v>
+            </o>
+            <o>
+              <v n="BitmapID">"OoIfLTVK-removebg-preview-removebg-preview"</v>
+              <v n="FileID">"5ce3da45-db07-42e7-a21c-a00fff4ed8f6|C:\Users\Berkay ABAY\Desktop\Uzaktan Eğitim\Resimler\OoIfLTVK-removebg-preview-removebg-preview.png"</v>
+              <v n="ItemID">8</v>
+            </o>
+            <o>
+              <v n="BitmapID">""</v>
+              <v n="FileID">""</v>
+              <v n="ItemID">1</v>
+            </o>
+          </l>
+          <v n="GuidInit">{520c53d9-275c-4d11-a92d-ab54e2269809}</v>
+          <v n="GuidReInit">{48a2fda7-0527-4c18-bd39-beaf220b2926}</v>
+          <v n="GuidExitX">{668ea5db-03f7-4027-af4f-a33feca6480f}</v>
+          <v n="ValidIds">false</v>
+        </o>
+      </Data>
+      <TypeList>
+        <Type n="ArrayList">System.Collections.ArrayList</Type>
+        <Type n="Boolean">System.Boolean</Type>
+        <Type n="Guid">System.Guid</Type>
+        <Type n="ImagePoolItem">{215b2719-0347-4e4d-ba85-8bcd66946f66}</Type>
+        <Type n="ImagePoolObject">{bb0b9044-714e-4614-ad3e-33cbdf34d16b}</Type>
+        <Type n="Int32">System.Int32</Type>
+        <Type n="String">System.String</Type>
+      </TypeList>
+    </XmlArchive>
+  </ImagePool>
+</TcPlcObject>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="MAIN" Id="{1157e777-fbfa-498c-980e-2b883f4e682e}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	PWM1: PWM;
+	tTime2: LTIME;
+	a1: LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[aoutput1:=32767;
+a1:=FUN_ITR(N:=ainput1 );
+tTime2:=LREAL_TO_LTIME(a1);
+PWM1(bVar:=binput1 , tTime:=tTime2, Led1=>boutput1 );
+pwm1.Led1;
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="6" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="18" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

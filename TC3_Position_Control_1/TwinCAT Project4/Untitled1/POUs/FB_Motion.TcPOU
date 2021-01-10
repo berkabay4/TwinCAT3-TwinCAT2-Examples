@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="FB_Motion" Id="{86bc4b4a-a009-4992-926e-1ac1c48eab02}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Motion
+VAR_INPUT
+	bStart: BOOL;
+	nPosition: LREAL;
+	bStopEx: BOOL;
+	bMoveAbs: BOOL;
+END_VAR
+VAR_OUTPUT
+	bBusy: BOOL;
+	bDone: BOOL;
+	bStopDone: BOOL;
+END_VAR
+VAR
+	MC_Power1: MC_Power;
+	MC_MoveAbsolute1: MC_MoveAbsolute;
+	MC_Stop1: MC_Stop;
+
+END_VAR
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[MC_Power1(
+	Axis:=Axis1 , 
+	Enable:=TRUE , 
+	Enable_Positive:=TRUE , 
+	Enable_Negative:=TRUE , 
+	Override:=100, 
+	BufferMode:= , 
+	Options:= , 
+	Status=> , 
+	Busy=> , 
+	Active=> , 
+	Error=> , 
+	ErrorID=> );
+	
+	
+	MC_MoveAbsolute1(
+	Axis:= Axis1, 
+	Execute:=bMoveAbs , 
+	Position:=nPosition , 
+	Velocity:= 8000, 
+	Acceleration:= , 
+	Deceleration:= , 
+	Jerk:= , 
+	BufferMode:= , 
+	Options:= , 
+	Done=>bDone , 
+	Busy=>bBusy , 
+	Active=> , 
+	CommandAborted=> , 
+	Error=> , 
+	ErrorID=> );
+	
+			MC_Stop1(
+	Axis:=Axis1 , 
+	Execute:=bStopEx , 
+	Deceleration:= , 
+	Jerk:= , 
+	Options:= , 
+	Done=>bStopDone , 
+	Busy=> , 
+	Active=> , 
+	CommandAborted=> , 
+	Error=> , 
+	ErrorID=> );]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Motion">
+      <LineId Id="10" Count="11" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="23" Count="1" />
+      <LineId Id="26" Count="14" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="60" Count="10" />
+      <LineId Id="59" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

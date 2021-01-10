@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <DUT Name="OUTPUT" Id="{2a474096-e491-4776-8503-c60a39270424}">
+    <Declaration><![CDATA[TYPE OUTPUT :
+STRUCT
+	
+	bDrill	:	BOOL;	//Matkap M1
+	bUp		:	BOOL;	// Yukarı Komutu
+	bDown	:	BOOL;	//Aşağı Komutu
+
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

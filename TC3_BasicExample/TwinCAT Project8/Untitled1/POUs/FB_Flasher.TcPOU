@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_Flasher" Id="{fd5fa9e1-16fa-43b1-bc5f-41adf27bea9c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Flasher
+VAR_INPUT
+		bStart: BOOL;
+END_VAR
+VAR_OUTPUT
+	bLed: BOOL;
+END_VAR
+VAR
+	nState: INT;
+	TF1: TON;
+	TF2: TON;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+CASE nState	OF
+	
+
+	0:
+		IF bStart THEN
+			nState := 10;
+		END_IF
+		
+	10:
+	
+		bLed	:=	TRUE;
+	
+		TF1(IN:=TRUE , PT:=T#500MS);
+		
+		IF TF1.Q THEN
+			TF1(IN:=FALSE);
+			nState := 20;
+		END_IF
+		
+	20:
+	
+		bLed	:=	FALSE;
+	
+		TF2(IN:=TRUE , PT:=T#500MS);
+		
+		IF TF2.Q THEN
+			TF2(IN:=FALSE);
+			nState := 0;
+		END_IF
+		
+
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Flasher">
+      <LineId Id="10" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="19" Count="2" />
+      <LineId Id="26" Count="1" />
+      <LineId Id="39" Count="2" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="34" Count="1" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="53" Count="9" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

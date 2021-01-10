@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="MAIN" Id="{42c2396e-1ffd-4478-a301-53d386c26b32}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	nState: INT;
+	bButton	:	BOOL;
+	fbMotion	:	FB_Motion;
+	T1: TON;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+stAxis1.IN.bPower	:=	TRUE;
+stAxis1.IN.fOverride	:=	100;
+
+fbMotion(Axis:=Axis1 , staxisinterface:=stAxis1 );
+ACT_Motion();]]></ST>
+    </Implementation>
+    <Action Name="ACT_Motion" Id="{538727a7-876b-4a14-b34e-503c6999e632}">
+      <Implementation>
+        <ST><![CDATA[CASE nState OF 
+	
+
+	0:
+	
+		IF bButton AND NOT stAxis1.OUT.bPowerErr
+		AND stAxis1.OUT.bPowerEnabled
+		AND NOT stAxis1.OUT.bPowerErr 
+		AND	NOT stAxis1.OUT.bStopActive THEN
+		
+			nState := 10;
+		
+		END_IF
+		
+		
+	10:
+	
+	stAxis1.IN.bMoveAbs	:=	TRUE;
+	stAxis1.IN.bStop	:=	FALSE;	
+	
+	stAxis1.IN.fPosition	:=	1000;
+	stAxis1.IN.fVelocity	:=	500;
+	
+	IF stAxis1.OUT.bMoveAbsBusy 
+	AND NOT stAxis1.OUT.bMoveAbsErr
+	AND NOT	stAxis1.OUT.bMoveAbsErr	THEN	
+	
+		nState := 20;	
+	
+	ELSIF stAxis1.OUT.bMoveAbsErr THEN
+		
+		nState:=999;
+		
+	END_IF
+	
+	
+	20:
+	
+	IF  stAxis1.OUT.bMoveAbsDone 
+	AND NOT stAxis1.OUT.bMoveAbsErr THEN
+
+		stAxis1.IN.bMoveAbs:=FALSE;
+		nState:=25;	
+		
+		
+	ELSIF stAxis1.OUT.bMoveAbsErr THEN
+		
+		nState := 999;
+	
+	END_IF
+	
+	
+	25:
+	
+	T1(IN:=TRUE , PT:=T#5S, Q=> , ET=> );
+	
+	IF T1.Q THEN
+		nState := 30;
+	T1(IN:=TRUE);
+	END_IF
+
+	30:
+	
+	stAxis1.IN.bMoveAbs	:=	TRUE;
+	stAxis1.IN.bStop	:=	FALSE;	
+	
+	stAxis1.IN.fPosition	:=	5000;
+	stAxis1.IN.fVelocity	:=	750;
+	
+	IF stAxis1.OUT.bMoveAbsBusy 
+	AND NOT stAxis1.OUT.bMoveAbsErr
+	AND NOT	stAxis1.OUT.bMoveAbsErr	THEN	
+	
+		nState := 40;	
+	
+	ELSIF stAxis1.OUT.bMoveAbsErr THEN
+		
+		nState:=999;
+		
+	END_IF
+	
+	
+	40:
+	
+	IF  stAxis1.OUT.bMoveAbsDone 
+	AND NOT stAxis1.OUT.bMoveAbsErr THEN
+
+		stAxis1.IN.bMoveAbs:=FALSE;
+		nState	:=	50;	
+		
+		
+	ELSIF stAxis1.OUT.bMoveAbsErr THEN
+		
+		nState := 999;
+	
+	END_IF
+	
+	
+	50:
+	
+	stAxis1.IN.bMoveAbs	:=	TRUE;
+	stAxis1.IN.bStop	:=	FALSE;	
+	
+	stAxis1.IN.fPosition	:=	0;
+	stAxis1.IN.fVelocity	:=	1000;
+	
+	IF stAxis1.OUT.bMoveAbsBusy 
+	AND NOT stAxis1.OUT.bMoveAbsErr
+	AND NOT	stAxis1.OUT.bMoveAbsErr	THEN	
+	
+		nState := 60;	
+	
+	ELSIF stAxis1.OUT.bMoveAbsErr THEN
+		
+		nState:=999;
+		
+	END_IF
+	
+	
+	60:
+	
+	IF  stAxis1.OUT.bMoveAbsDone 
+	AND NOT stAxis1.OUT.bMoveAbsErr THEN
+
+		stAxis1.IN.bMoveAbs:=FALSE;
+		nState	:=	0;	
+		
+		
+	ELSIF stAxis1.OUT.bMoveAbsErr THEN
+		
+		nState := 999;
+	
+	END_IF
+	
+	
+	
+	
+END_CASE]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="MAIN">
+      <LineId Id="7" Count="0" />
+      <LineId Id="14" Count="1" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_Motion">
+      <LineId Id="1" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="20" Count="4" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="25" Count="3" />
+      <LineId Id="31" Count="3" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="39" Count="1" />
+      <LineId Id="36" Count="1" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="44" Count="1" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="63" Count="2" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="66" Count="1" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="159" Count="3" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="163" Count="2" />
+      <LineId Id="168" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="73" Count="15" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="107" Count="15" />
+      <LineId Id="124" Count="34" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="71" Count="1" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.16">
+  <POU Name="FB_Control" Id="{e52de16d-7a51-46f2-8ee6-cf9e07effbca}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Control
+VAR_INPUT
+	button1: BOOL;
+	ProcessDone: BOOL;
+END_VAR
+VAR_OUTPUT
+	ProgEx: BOOL;
+		position: LREAL;
+
+END_VAR
+VAR
+	nState: INT;
+	TON1: TON;
+	TON2: TON;
+	TON3: TON;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+CASE nState OF
+0:
+	
+	IF button1 THEN
+		nState:=10;
+	END_IF
+10:
+	position:=30000;	
+	nState:=15;
+		progEx:=TRUE;
+
+15:
+IF ProcessDone THEN
+	TON1(IN:=TRUE, PT:=T#1S , Q=> , ET=> );
+	IF TON1.Q THEN
+		nState:=19;
+		TON1(IN:=FALSE);
+
+	END_IF
+END_IF
+
+19:
+	ProgEx:=FALSE;
+	nState:=20;
+
+20:
+	position:=20000;
+nState:=25;
+		progEx:=TRUE;
+
+
+25:
+IF ProcessDone THEN
+		TON2(IN:=TRUE, PT:=T#4S , Q=> , ET=> );
+	IF TON2.Q THEN
+		nState:=26;
+		TON2(IN:=FALSE);
+	END_IF
+END_IF
+
+26:
+	ProgEx:=FALSE;
+	nState:=30;
+
+30:
+	position:=0;
+	nState:=35;
+	progEx:=TRUE;
+
+35:
+IF ProcessDone THEN
+		TON3(IN:=TRUE, PT:=T#2S , Q=> , ET=> );
+	IF TON3.Q THEN
+		nState:=36;
+		TON3(IN:=FALSE);
+	END_IF
+END_IF
+36:
+	
+	ProgEx:=FALSE;
+	nState:=0;
+
+END_CASE
+
+IF button1=FALSE THEN
+	
+		ProgEx:=FALSE;
+		TON2(IN:=FALSE);
+		TON2(IN:=FALSE);
+		nState:=0;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Control">
+      <LineId Id="10" Count="4" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="38" Count="1" />
+      <LineId Id="53" Count="1" />
+      <LineId Id="102" Count="1" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="58" Count="1" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="65" Count="2" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="63" Count="1" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="91" Count="1" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="114" Count="2" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="118" Count="4" />
+      <LineId Id="131" Count="1" />
+      <LineId Id="127" Count="1" />
+      <LineId Id="130" Count="0" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="100" Count="1" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="96" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

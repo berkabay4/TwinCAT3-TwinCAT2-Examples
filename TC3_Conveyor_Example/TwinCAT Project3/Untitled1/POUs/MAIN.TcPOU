@@ -1,0 +1,368 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="MAIN" Id="{80ee3623-f28a-44be-b20d-920e9e8fec7c}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	nState: INT;
+	bButon: BOOL;
+	bSensor1: BOOL;
+	ftrig1: F_TRIG;
+	bHat: BOOL;
+	rtrig1: R_TRIG;
+	bSensor2: BOOL;
+	random1: DRAND;
+	nYukseklik: INT;
+	Select1: FB_MalzemeSecme;
+	T1: TON;
+	T2: TON;
+	T3: TON;
+	bKol1: BOOL;
+	bKutuSens1: BOOL;
+	bKutuSens2: BOOL;
+	bKutuSens3: BOOL;
+	rtrig2: R_TRIG;
+	rtrig3: R_TRIG;
+	rtrig4: R_TRIG;
+	bKol2: BOOL;
+	bKol3: BOOL;
+	nKisaKutu: INT;
+	nOrtaKutu: INT;
+	nUzunKutu: INT;
+	sInfoMsg: STRING;
+	sMsgKisa_1: STRING(255);
+	sMsgOrta_1: STRING(255);
+	sMsgUzun_1: STRING(255);
+	sMsgYukseklik: STRING(255);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+ACT_PRG();
+
+ACT_VisuMsg();
+
+	]]></ST>
+    </Implementation>
+    <Action Name="ACT_PRG" Id="{343a227b-6950-40dc-a3d2-f8760d16042a}">
+      <Implementation>
+        <ST><![CDATA[
+ftrig1(CLK:= bSensor1 , Q=> );
+
+rtrig1(CLK:= bSensor2 , Q=> );
+
+
+rtrig2(CLK:= bKutuSens1 , Q=> ); // Kısa malzeme kutusu sensörü
+
+rtrig3(CLK:= bKutuSens2 , Q=> ); // Orta malzeme kutusu sensörü
+
+rtrig4(CLK:= bKutuSens3 , Q=> ); // Uzun malzeme kutusu sensörü
+
+
+CASE nState OF 
+	
+
+	0:
+	
+	IF bButon THEN 
+		
+		nState := 10;
+		
+	END_IF
+	
+	
+	10:
+	
+	sInfoMsg := 'Malzeme Bekleniyor.';
+	
+	IF ftrig1.Q THEN
+		
+		nState := 20;
+		
+	END_IF
+	
+	
+	20:
+	
+	bHat := TRUE;
+	
+	sInfoMsg := 'Hat Aktif, Malzemenin Konuma Gelmesi Bekleniyor.';
+
+	IF rtrig1.Q THEN
+		
+		bHat := FALSE;
+		
+		random1(Seed:=10 , Num=> );
+		nYukseklik := LREAL_TO_INT(random1.Num * 100);
+		
+		nState := 30;
+		
+	END_IF
+	
+	
+	30:
+		
+	Select1(nValue:=nYukseklik,
+			nStateOut=>nState, 
+			sMsg =>sInfoMsg );	
+	
+	
+	32:
+	
+		bHat := TRUE;
+		T1(IN:=TRUE , PT:=T#2S);
+		
+		IF T1.Q THEN
+			nState := 42;
+			T1(IN:=FALSE);
+			bHat := FALSE;
+		END_IF
+	
+	34:
+	
+		bHat := TRUE;
+		T2(IN:=TRUE , PT:=T#4S);
+		
+		IF T2.Q THEN
+			nState := 44;
+			T2(IN:=FALSE);
+			bHat := FALSE;
+		END_IF
+	
+	
+	36:
+		bHat := TRUE;
+		T3(IN:=TRUE , PT:=T#6S);
+		
+		IF T3.Q THEN
+			nState := 46;
+			T3(IN:=FALSE);
+			bHat := FALSE;
+		END_IF
+		
+		
+	42:
+		
+		bKol1 := TRUE;
+		sInfoMsg	:=	'Kısa Boyutlu Malzeme Kutusuna Koyuluyor.';
+		
+		IF rtrig2.Q THEN
+			
+			bKol1 := FALSE;
+			
+			nKisaKutu := nKisakutu + 1;
+			
+			nState := 0;
+			
+		END_IF
+		
+		
+	
+	44:
+	
+		bKol2 := TRUE;
+		sInfoMsg	:=	'Orta Boyutlu Malzeme Kutusuna Koyuluyor.';
+		
+		IF rtrig3.Q THEN
+			
+			bKol2 := FALSE;
+			
+			nOrtaKutu := nOrtaKutu + 1;
+			
+			nState := 0;
+			
+		END_IF	
+
+	46:
+		bKol3:= TRUE;
+		sInfoMsg	:=	'Uzun Boyutlu Malzeme Kutusuna Koyuluyor.';
+		
+		IF rtrig4.Q THEN
+			
+			bKol3 := FALSE;
+			
+			nUzunKutu := nUzunKutu + 1;
+			
+			nState := 0;
+			
+		END_IF	
+	
+			
+END_CASE
+
+
+	IF NOT bButon THEN 
+		
+		nState := 0;
+		sInfoMsg := 'Sistem Kapali.';
+		bKol1 := FALSE;
+		bKol2 := FALSE;
+		bKol3 := FALSE;
+		T1(IN:=FALSE);
+		T2(IN:=FALSE);
+		T3(IN:=FALSE);
+		
+	END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_VisuMsg" Id="{0c989fe7-d8ef-4545-bff2-357eb7051986}">
+      <Implementation>
+        <ST><![CDATA[
+
+sMsgKisa_1 := CONCAT(STR1:='Kisa Malzeme Kutusunda ' , STR2:= INT_TO_STRING(nKisaKutu) );
+sMsgKisa_1 := CONCAT(STR1:=sMsgKisa_1 , STR2:= ' Malzeme Var' );
+
+sMsgOrta_1 := CONCAT(STR1:='Orta Malzeme Kutusunda ' , STR2:= INT_TO_STRING(nOrtaKutu) );
+sMsgOrta_1 := CONCAT(STR1:=sMsgOrta_1 , STR2:= ' Malzeme Var' );
+
+sMsgUzun_1 := CONCAT(STR1:='Uzun Malzeme Kutusunda ' , STR2:= INT_TO_STRING(nUzunKutu) );
+sMsgUzun_1 := CONCAT(STR1:=sMsgUzun_1 , STR2:= ' Malzeme Var' );
+
+sMsgYukseklik := CONCAT(STR1:='Malzeme Yüksekligi: ' , STR2:= INT_TO_STRING(nYukseklik) );
+sMsgYukseklik := CONCAT(STR1:=sMsgYukseklik , STR2:= ' [cm]' );
+
+
+]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="MAIN">
+      <LineId Id="47" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="49" Count="1" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_PRG">
+      <LineId Id="2" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="103" Count="1" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="4" Count="0" />
+      <LineId Id="7" Count="3" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="157" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="55" Count="1" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="39" Count="2" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="164" Count="1" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="57" Count="2" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="66" Count="3" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="190" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="72" Count="4" />
+      <LineId Id="192" Count="0" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="61" Count="1" />
+      <LineId Id="79" Count="4" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="91" Count="2" />
+      <LineId Id="99" Count="1" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="111" Count="1" />
+      <LineId Id="150" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="101" Count="1" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="199" Count="0" />
+      <LineId Id="198" Count="0" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="128" Count="0" />
+      <LineId Id="130" Count="0" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="131" Count="1" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="139" Count="1" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="167" Count="4" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="176" Count="0" />
+      <LineId Id="178" Count="1" />
+      <LineId Id="185" Count="3" />
+      <LineId Id="166" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_VisuMsg">
+      <LineId Id="2" Count="1" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="12" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
