@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TargetSystemConfig Crc="4203264970" Version="1.4">
+  <TargetSystemType>HSafetyPLC</TargetSystemType>
+  <TargetSystemSubType></TargetSystemSubType>
+  <IsExternalDevice>False</IsExternalDevice>
+  <TargetSystemObjectId/>
+  <TargetSystemObjectName/>
+  <SoftwareVersion/>
+  <SerialNumber/>
+  <ProjectCRC/>
+  <MapProjectCRC>False</MapProjectCRC>
+  <MapSerialNumber>False</MapSerialNumber>
+  <VersionNumber>1</VersionNumber>
+  <FSOEAddress>1</FSOEAddress>
+  <DipSwitch/>
+  <AmsNetID/>
+  <AmsPort/>
+  <ConnectionInfoDataConfigOld>False</ConnectionInfoDataConfigOld>
+</TargetSystemConfig>

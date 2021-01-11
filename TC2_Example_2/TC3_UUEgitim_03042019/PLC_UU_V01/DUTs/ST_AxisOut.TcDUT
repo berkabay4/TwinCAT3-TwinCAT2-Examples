@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="ST_AxisOut" Id="{83e34957-b423-4e50-9039-0ee5835fa7cd}">
+    <Declaration><![CDATA[TYPE ST_AxisOut :
+STRUCT
+	bEnabled	: BOOL;
+	bJogBusy	: BOOL;
+	bJogDone	: BOOL;
+	bMoveAbsDone: BOOL;
+	bMoveAbsBusy: BOOL;
+	bJogError	: BOOL;
+	bPowerErr	: BOOL;
+	bMoveAbsErr	: BOOL;
+	bStopDone	: BOOL;
+	bStopBusy	: BOOL;
+	bStopErr	: BOOL;
+	bStopActive : BOOL;	
+	bResetDone	:BOOL;
+
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <GVL Name="GVL_Servo" Id="{bc0d18a6-57ae-4db4-bb6b-d64e3bdb82e4}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	Axis1	: AXIS_REF;
+	Axis2	: AXIS_REF;
+	
+	stAxis1	: ST_AxisInterface;
+	stAxis2	: ST_AxisInterface;
+	
+	fbMotion1	: FB_Motion;
+	fbMotion2	: FB_Motion;
+	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

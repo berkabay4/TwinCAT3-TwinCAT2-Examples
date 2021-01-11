@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<safetyApplication Crc="725451423" xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.1.0.0" name="" xmlns="http://schemas.microsoft.com/dsltools/SafetyApplicationLanguage">
+  <networks>
+    <safetyApplicationHasNetworks>
+      <Network name="Network1" networkName="Network1" />
+    </safetyApplicationHasNetworks>
+  </networks>
+  <twinSAFEGroupAliasPorts>
+    <safetyApplicationHasTwinSAFEGroupAliasPort>
+      <twinSAFEGroupAliasPort name="ErrAck.SdsId1.channelId1" sdsId="1" channelId="1" portName="ErrAck"/>
+    </safetyApplicationHasTwinSAFEGroupAliasPort>
+  </twinSAFEGroupAliasPorts>
+</safetyApplication>

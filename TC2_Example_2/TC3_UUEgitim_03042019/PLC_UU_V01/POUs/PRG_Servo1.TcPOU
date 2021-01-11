@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="PRG_Servo1" Id="{3613d12f-9e52-4b46-b051-619bcd6c45f5}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Servo1
+VAR
+	nState: INT;
+	bBaslat	: bool;
+	bSensor1: BOOL;
+	rSayici: R_TRIG;
+	bSensor2: BOOL;
+	nSayici: INT;
+	nCounter: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[stAxis1.INPUT.bEnable	:= TRUE;
+staxis1.INPUT.bStop:=FALSE;
+stAxis1.INPUT.bReset := FALSE;
+
+
+rSayici(CLK:= bSensor2, Q=> );
+CASE nState OF
+	
+0:
+	IF bBaslat AND staxis1.OUTPUT.bEnabled AND NOT stAxis1.OUTPUT.bPowerErr THEN
+		nState	:= 10;
+		nCounter := 0;
+	END_IF
+	
+10:
+	stAxis1.INPUT.bMoveAbs	:= TRUE;
+	stAxis1.INPUT.fVelocity	:= 4000;
+	stAxis1.INPUT.fPosition	:= 30000;
+	
+	IF stAxis1.OUTPUT.bMoveAbsBusy AND NOT stAxis1.OUTPUT.bMoveAbsErr THEN
+
+		nState					:= 20;
+		stAxis1.INPUT.bMoveAbs:=FALSE;
+
+	ELSIF stAxis1.OUTPUT.bMoveAbsErr THEN
+	
+	nState					:= 999;
+	nCounter := nState;
+	stAxis1.INPUT.bMoveAbs	:= FALSE;
+
+	END_IF
+			
+20:
+	IF stAxis1.OUTPUT.bMoveAbsDone AND NOT stAxis1.OUTPUT.bMoveAbsErr THEN
+		nState					:= 30;
+		nCounter := nState;
+
+	ELSIF stAxis1.OUTPUT.bMoveAbsErr THEN	
+		nState					:= 999;
+		nCounter := nState;
+
+	END_IF
+	
+30:	
+	IF bSensor1 THEN
+		nState	:= 40;
+		nCounter:=nState;
+	END_IF
+	
+40:
+	nCounter:=30;
+
+	stAxis1.INPUT.bMoveAbs	:= TRUE;
+	stAxis1.INPUT.fVelocity	:= 7000;
+	stAxis1.INPUT.fPosition	:= 50000;
+	
+	IF stAxis1.OUTPUT.bMoveAbsBusy AND NOT stAxis1.OUTPUT.bMoveAbsErr THEN
+		stAxis1.INPUT.bMoveAbs	:= FALSE;
+		nState					:= 50;
+
+	ELSIF stAxis1.OUTPUT.bMoveAbsErr THEN
+		nState					:= 999;
+		nCounter := nState;
+
+		stAxis1.INPUT.bMoveAbs	:= FALSE;		
+	END_IF
+	
+50:
+	IF stAxis1.OUTPUT.bMoveAbsDone AND NOT stAxis1.OUTPUT.bMoveAbsErr THEN
+		nState					:= 60;
+		nCounter := nState;
+
+	ELSIF stAxis1.OUTPUT.bMoveAbsErr THEN	
+		nState					:= 999;
+		nCounter := nState;
+
+	END_IF
+
+60:
+	IF rSayici.Q AND nSayici<5 THEN
+		nSayici	:= nSayici+1;	
+	ELSIF nSayici>=5 THEN
+		nSayici	:=0;
+		nState	:= 70;
+		nCounter := nState;
+	END_IF
+
+70:
+	stAxis1.INPUT.bMoveAbs	:= TRUE;
+
+	stAxis1.INPUT.fVelocity	:= 8000;
+	stAxis1.INPUT.fPosition	:= 0;
+	nCounter:=60;
+	IF stAxis1.OUTPUT.bMoveAbsBusy AND NOT stAxis1.OUTPUT.bMoveAbsErr THEN
+		stAxis1.INPUT.bMoveAbs	:= FALSE;
+		nState					:= 80;
+		nCounter := nState;
+
+	ELSIF stAxis1.OUTPUT.bMoveAbsErr THEN
+		nState					:= 999;
+		nCounter := nState;
+
+		stAxis1.INPUT.bMoveAbs	:= FALSE;		
+	END_IF
+	
+80:
+	IF stAxis1.OUTPUT.bMoveAbsDone AND NOT stAxis1.OUTPUT.bMoveAbsErr THEN
+				nState	:= 0;
+				nCounter := nState;
+
+	ELSIF stAxis1.OUTPUT.bMoveAbsErr THEN	
+		nState					:= 999;
+		nCounter := nState;
+
+	END_IF
+	
+END_CASE
+
+IF stAxis1.OUTPUT.bPowerErr THEN
+	stAxis1.INPUT.bReset := TRUE;
+	nState:=0;
+END_IF
+
+IF NOT bBaslat THEN
+	
+staxis1.INPUT.bStop:=TRUE;
+stAxis1.INPUT.bMoveAbs	:= FALSE;
+staxis1.OUTPUT.bEnabled:=TRUE;
+
+
+		IF staxis1.OUTPUT.bEnabled
+		AND NOT stAxis1.OUTPUT.bPowerErr 
+		AND NOT stAxis1.OUTPUT.bMoveAbsErr
+		AND NOT staxis1.OUTPUT.bStopErr 
+		AND  staxis1.OUTPUT.bStopBusy THEN
+	
+	staxis1.INPUT.bStop:=FALSE;
+	nState:=nCounter;
+
+	END_IF
+
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_Servo1">
+      <LineId Id="235" Count="2" />
+      <LineId Id="225" Count="0" />
+      <LineId Id="211" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="5" Count="1" />
+      <LineId Id="9" Count="1" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="20" Count="1" />
+      <LineId Id="245" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="115" Count="1" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="227" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="31" Count="3" />
+      <LineId Id="119" Count="1" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="40" Count="3" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="48" Count="1" />
+      <LineId Id="249" Count="0" />
+      <LineId Id="248" Count="0" />
+      <LineId Id="51" Count="2" />
+      <LineId Id="207" Count="0" />
+      <LineId Id="54" Count="2" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="57" Count="1" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="128" Count="0" />
+      <LineId Id="59" Count="5" />
+      <LineId Id="131" Count="1" />
+      <LineId Id="65" Count="1" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="130" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="135" Count="1" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="88" Count="1" />
+      <LineId Id="191" Count="0" />
+      <LineId Id="90" Count="2" />
+      <LineId Id="144" Count="1" />
+      <LineId Id="93" Count="1" />
+      <LineId Id="198" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="95" Count="5" />
+      <LineId Id="193" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="101" Count="1" />
+      <LineId Id="199" Count="0" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="220" Count="0" />
+      <LineId Id="182" Count="0" />
+      <LineId Id="221" Count="0" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="214" Count="0" />
+      <LineId Id="240" Count="0" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="218" Count="0" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="158" Count="0" />
+      <LineId Id="244" Count="0" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="166" Count="0" />
+      <LineId Id="150" Count="0" />
+      <LineId Id="149" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

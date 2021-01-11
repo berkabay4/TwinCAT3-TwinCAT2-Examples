@@ -1,0 +1,5 @@
+352912
+c:\users\kerim\desktop\tc2_uludag12202018_\hmi\depo.bmp
+c:\users\kerim\desktop\tc2_uludag12202018_\hmi\box (1).bmp
+c:\users\kerim\desktop\tc2_uludag12202018_\hmi\iconfinder_23_-_truck_2102059 (1).bmp
+c:\twincat\plc\plc_v01vis.txt

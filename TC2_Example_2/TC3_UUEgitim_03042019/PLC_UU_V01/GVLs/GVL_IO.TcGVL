@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <GVL Name="GVL_IO" Id="{2aee6a5b-7f6e-499f-9b92-1030ee8c9475}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	bInput1	AT%I*	: BOOL;
+	bInput2	AT%I*	: BOOL;
+	bInput3	AT%I*	: BOOL;
+	bInput4	AT%I*	: BOOL;
+	
+	bOutput1	AT%Q*	: BOOL;
+	bOutput2	AT%Q*	: BOOL;
+	bOutput3	AT%Q*	: BOOL;
+	bOutput4	AT%Q*	: BOOL;
+	
+	nInput1		AT%I*	: INT;
+	nInput2		AT%I*	: INT;
+	
+	nOutput1	AT%Q*	: INT;
+	nOutput2	AT%Q*	: INT;
+	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>
