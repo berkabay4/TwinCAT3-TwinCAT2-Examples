@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="PRG_Simulation" Id="{49b9eab7-c0f0-4232-bb02-e8fa5328da03}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Simulation
+VAR
+	fAxis3SimulationActPosY: LREAL;
+	bParca1Invisible: BOOL;
+	bParca2Invisible2: BOOL;
+	fAxis1SimulationActPosX: LREAL;
+
+	fAxis2SimulationActPosX: LREAL;
+	bMatkapInvisible: BOOL;
+	bMatkapInvisible2: BOOL;
+	bMatkapInvisible3: BOOL;
+	nState: INT;
+	nUp: INT;
+	bParcaUpInvisible: BOOL;
+	nRight: INT;
+	bParcaRightInvisible: BOOL;
+	t1: TON;
+	bAxis31000Position: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF Axis1.NcToPlc.ActPos >= 6000 AND Axis1.NcToPlc.ActPos < 20000 THEN
+	bParca1Invisible		:= TRUE;
+	bParca2Invisible2		:= FALSE;
+	fAxis1SimulationActPosX	:= (Axis1.NcToPlc.ActPos-6000)/30;
+ELSIF Axis1.NcToPlc.ActPos >= 20000 THEN
+	bParca2Invisible2		:= TRUE;
+	bAxis31000Position		:= FALSE;
+	fAxis3SimulationActPosY	:= 0;
+ELSIF Axis1.NcToPlc.ActPos=0 OR Axis1.NcToPlc.ActPos<1 THEN
+	bParca2Invisible2		:= TRUE;
+END_IF
+
+IF Axis2.NcToPlc.ActPos>=1000 AND Axis2.Status.PositiveDirection THEN
+	fAxis2SimulationActPosX	:= (Axis2.NcToPlc.ActPos-1000)/30;
+	bMatkapInvisible		:= TRUE;
+	bMatkapInvisible2		:= FALSE;
+ELSIF Axis2.NcToPlc.ActPos=0 OR Axis2.NcToPlc.ActPos<1 THEN
+	bMatkapInvisible		:= FALSE;
+	bMatkapInvisible3		:= TRUE;
+	bMatkapInvisible2		:= TRUE;
+END_IF
+
+
+IF Axis2.Status.NegativeDirection THEN
+	fAxis2SimulationActPosX	:= (Axis2.NcToPlc.ActPos)/30;
+	bMatkapInvisible	:= TRUE;
+	bMatkapInvisible2	:= TRUE;
+	bMatkapInvisible3	:= FALSE;
+END_IF
+
+IF Axis3.NcToPlc.ActPos>=692.3076921 AND NOT bAxis31000Position THEN
+	fAxis3SimulationActPosY	:= (Axis3.NcToPlc.ActPos/15.38461538)-45;
+END_IF
+
+IF  Axis3.NcToPlc.ActPos>=999 THEN
+	fAxis3SimulationActPosY	:= 20;
+	bAxis31000Position		:= TRUE;
+END_IF
+
+CASE nState OF
+
+0:
+	.bStartSensor	:= FALSE;
+	IF NOT .bProcessActive THEN
+		.bEnable	:= TRUE;
+		nState		:= 10;
+		bParcaUpInvisible	:= FALSE; 
+	END_IF
+
+10:
+	nUp						:= nUp+1;
+	IF nUp>=135 THEN
+		nState				:= 20;
+	END_IF
+	
+20:
+	nRight					:= nRight+1;
+	IF nRight>=61 THEN
+		bParcaUpInvisible	:= TRUE; 
+		nState				:= 25;
+		bParca1Invisible		:= FALSE;
+	END_IF
+	
+25:
+	nRight					:= nRight-1;
+	IF nRight<=0 THEN		
+		nState				:= 27;	
+	END_IF
+
+27:
+	nUp						:= nUp-1;
+	IF nUp<=0 THEN
+		nState				:= 30;
+	END_IF
+30:
+	bStartSensor				:= TRUE;
+	t1(IN:= TRUE , PT:= T#30MS , Q=> , ET=> );
+	IF t1.Q THEN
+		t1(IN:= FALSE);
+		nState						:= 0;
+		nRight						:= 0;
+		nUp							:= 0;
+	END_IF
+
+END_CASE
+
+
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_Simulation">
+      <LineId Id="9" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="69" Count="1" />
+      <LineId Id="171" Count="1" />
+      <LineId Id="128" Count="0" />
+      <LineId Id="130" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="48" Count="1" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="5" Count="2" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="173" Count="1" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="175" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="91" Count="1" />
+      <LineId Id="94" Count="2" />
+      <LineId Id="101" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="107" Count="1" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="159" Count="1" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="158" Count="0" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="153" Count="2" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="109" Count="1" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="125" Count="1" />
+      <LineId Id="123" Count="1" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="149" Count="1" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="25" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

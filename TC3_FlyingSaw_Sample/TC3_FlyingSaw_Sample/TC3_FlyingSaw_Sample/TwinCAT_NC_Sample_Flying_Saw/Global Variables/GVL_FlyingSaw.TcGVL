@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <GVL Name="GVL_FlyingSaw" Id="{dcf5e8de-7c6e-41d3-8fa7-9fe00d6c605e}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	bStartSensor: BOOL;
+	bProcessActive: BOOL;
+	nLastState: INT;
+	bAsagi: BOOL;
+	bYukari: BOOL;
+	bYukariSensor: BOOL;
+	bBaslat: BOOL;
+	bMalzemeSensoru: BOOL;
+	i: DINT;
+	rProcessActive: R_TRIG;
+	fCalculate: LREAL;
+	fbMcSetPosition: MC_SetPosition;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

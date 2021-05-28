@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="PRG_FlyingSaw" Id="{db73d7f3-ac42-401a-8734-5a44ca8e46a7}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_FlyingSaw
+VAR
+	nState: INT;
+
+	sMsg: STRING(INT#30);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[rProcessActive(CLK:= bProcessActive , Q=> );
+IF rProcessActive.Q THEN
+			i	:= i+1;
+END_IF
+
+CASE nState OF
+	
+0:
+	IF bStartSensor THEN
+		nState	:= 5;
+		bProcessActive	:= TRUE;
+	END_IF
+
+5:
+	IF stAxis1.OUT.bEnabled AND stAxis2.OUT.bEnabled AND stAxis3.OUT.bEnabled THEN
+		nState	:= 10;	
+	END_IF
+	
+10:	
+	stAxis1.IN.bMoveAbs		:= TRUE;
+	stAxis1.IN.fVelo				:= 3000;
+	stAxis1.IN.fPos					:= 20000;
+	IF stAxis1.OUT.bMoveAbsBusy AND NOT stAxis1.OUT.bMoveAbsErr THEN
+		nState						:= 20;
+		//stAxis1.IN.bMcMoveModulo	:= FALSE;
+	ELSIF stAxis1.OUT.bMoveAbsErr THEN
+		nLastState					:= nState;		
+		stAxis1.IN.bMcMoveModulo	:= FALSE;
+		nState						:= 999;
+	END_IF
+	
+20:
+	fCalculate	:= (((DINT_TO_LREAL(i-1))*20000)+1000);
+	IF Axis1.NcToPlc.ModuloActPos >= 1000 THEN
+		nState	:= 30;
+	ELSIF axis1.Status.Error THEN
+		nState	:= 999;
+	END_IF
+	
+30:
+	stAxis1.IN.bGearInPos			:= TRUE;
+	stAxis1.IN.fMasterGearPos		:= 6000;
+	stAxis1.IN.fSlaveGearPos		:= 1000;
+
+	(*
+	IF i=1 THEN
+		stAxis1.IN.fMasterGearPos		:= 6000;
+		stAxis1.IN.fSlaveGearPos		:= 1000;
+		stAxis1.IN.fMasterStartDistance	:= 0;
+	ELSE
+		stAxis1.IN.fMasterGearPos		:= 6000+(20000*DINT_TO_LREAL(i));
+		stAxis1.IN.fSlaveGearPos		:= 1000;
+		stAxis1.IN.fMasterStartDistance	:= 20000*i;
+	END_IF*)
+	IF stAxis1.OUT.bCoupled AND NOT stAxis1.OUT.bCoupleErr THEN
+		nState					:= 40;
+		stAxis1.IN.bGearInPos	:= FALSE;
+		sMsg					:= 'Flying Saw Hareketi Basladi...';
+	ELSIF stAxis1.OUT.bCoupleErr THEN
+	//	stAxis1.IN.bGearInPos	:= FALSE;
+		nState					:= 999;
+	END_IF
+	
+40:	
+	IF Axis2.NcToPlc.ActPos>=1000 THEN
+		nState		:= 50;
+	ELSIF axis2.Status.Error THEN
+		nState		:= 999;
+	END_IF
+		
+50:
+	stAxis3.IN.bMoveAbs				:= TRUE;
+	stAxis3.IN.fVelo				:= 2000;
+	stAxis3.IN.fPos					:= 1000;
+	IF stAxis3.OUT.bMoveAbsBusy AND NOT stAxis3.OUT.bMoveAbsErr THEN
+		nState				:= 60;
+		stAxis3.IN.bMoveAbs	:= FALSE;
+	ELSIF stAxis3.OUT.bMoveAbsErr THEN
+		nState				:= 999;
+		stAxis3.IN.bMoveAbs	:= FALSE;
+	END_IF
+
+60:
+	IF stAxis3.OUT.bMoveAbsDone  AND NOT stAxis3.OUT.bMoveAbsErr  THEN
+		nState				:= 70;
+	ELSIF stAxis3.OUT.bMoveAbsErr  THEN
+		nState				:= 999;
+	END_IF
+	
+70:
+	stAxis3.IN.bMoveAbs		:= TRUE;
+	stAxis3.IN.fVelo		:= 1000;
+	stAxis3.IN.fPos			:= 0;
+	IF stAxis3.OUT.bMoveAbsBusy AND NOT stAxis3.OUT.bMoveAbsErr THEN
+		nState				:= 80;
+		stAxis3.IN.bMoveAbs	:= FALSE;
+	ELSIF stAxis3.OUT.bMoveAbsErr THEN
+		nState				:= 999;
+		stAxis3.IN.bMoveAbs	:= FALSE;
+	END_IF
+	
+80:
+	IF stAxis3.OUT.bMoveAbsDone  AND NOT stAxis3.OUT.bMoveAbsErr  THEN
+		nState				:= 90;
+	ELSIF stAxis3.OUT.bMoveAbsErr  THEN
+		nState				:= 999;
+	END_IF
+	
+90:
+	stAxis1.IN.bGearOut := TRUE;
+	IF stAxis1.OUT.bDecoupled THEN
+		stAxis1.IN.bGearOut := FALSE;
+		nState				:= 100;
+		sMsg				:= 'Flying Saw Hareketi Sonlandi...';
+	END_IF
+	
+100:
+	stAxis2.IN.bStop	:= TRUE;
+	IF stAxis2.OUT.bStopDone THEN
+		nState			:= 110;
+		stAxis2.IN.bStop:= FALSE;
+	END_IF
+	
+110:
+	stAxis2.IN.bMoveAbs	:= TRUE;
+	stAxis2.IN.fVelo	:= 7000;
+	stAxis2.IN.fPos		:= 0;
+	IF stAxis2.OUT.bMoveAbsBusy AND NOT stAxis2.OUT.bMoveAbsErr  THEN
+		nState	:= 120;
+	//	stAxis2.IN.bMoveAbs	:= FALSE;	
+	ELSIF stAxis2.OUT.bMoveAbsErr  THEN
+		nState	:= 99;		
+		stAxis2.IN.bMoveAbs	:= FALSE;	
+	END_IF
+	
+120:
+	IF stAxis2.OUT.bMoveAbsDone AND NOT stAxis2.OUT.bMoveAbsErr  THEN
+		nState	:= 130;
+	ELSIF stAxis2.OUT.bMoveAbsErr  THEN
+		nState		:= 99;
+	END_IF
+	
+
+(*	
+140:
+	stAxis1.IN.bMcMoveModulo		:= TRUE;
+	stAxis1.IN.fVelo				:= 2000;
+	stAxis1.IN.fPos					:= 0;
+	IF stAxis1.OUT.bMoveModuloBusy AND NOT stAxis1.OUT.bMoveModuloErr THEN
+		nState						:= 150;
+		stAxis1.IN.bMcMoveModulo	:= FALSE;
+	ELSIF stAxis1.OUT.bMoveModuloErr THEN
+		nLastState					:= nState;		
+		stAxis1.IN.bMcMoveModulo	:= FALSE;
+		nState						:= 999;
+	END_IF
+	
+150:
+	IF stAxis1.OUT.bMoveModuloDone THEN
+		nState			:= 160;
+		bProcessActive	:= FALSE;
+	ELSIF stAxis1.OUT.bMoveModuloErr THEN
+		nState			:= 999;
+	END_IF
+	*)
+160:
+	stAxis1.IN.bSetPosition		:= TRUE;
+	IF stAxis1.OUT.bSetPositionDone THEN
+		stAxis1.IN.bSetPosition	:= FALSE;
+		nState					:= 0;
+		bProcessActive			:= FALSE;
+	END_IF
+	
+999:
+;
+
+END_CASE
+
+IF stAxis1.OUT.bMoveAbsDone AND stAxis2.OUT.bMoveAbsDone  THEN
+	nState	:= 160;
+	stAxis1.IN.bMoveAbs	:= FALSE;		
+	stAxis2.IN.bMoveAbs	:= FALSE;	
+ELSIF stAxis1.OUT.bMoveAbsErr THEN
+	nState	:= 999;
+	stAxis1.IN.bMoveAbs	:= FALSE;	
+END_IF
+
+
+IF NOT bProcessActive AND NOT bStartSensor AND bMalzemeSensoru THEN
+		bAsagi		:= TRUE;
+		bYukari		:= FALSE;
+ELSIF bStartSensor THEN
+		bAsagi		:= FALSE;
+		bYukari		:= TRUE;
+ELSIF bYukariSensor THEN
+		bYukari		:= FALSE;
+		bAsagi		:= FALSE;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_FlyingSaw">
+      <LineId Id="215" Count="0" />
+      <LineId Id="232" Count="1" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="234" Count="0" />
+      <LineId Id="5" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="22" Count="1" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="10" Count="2" />
+      <LineId Id="15" Count="4" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="230" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="51" Count="1" />
+      <LineId Id="47" Count="3" />
+      <LineId Id="239" Count="1" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="237" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="205" Count="0" />
+      <LineId Id="212" Count="0" />
+      <LineId Id="235" Count="0" />
+      <LineId Id="209" Count="2" />
+      <LineId Id="236" Count="0" />
+      <LineId Id="213" Count="0" />
+      <LineId Id="53" Count="1" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="58" Count="1" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="66" Count="3" />
+      <LineId Id="72" Count="2" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="82" Count="1" />
+      <LineId Id="78" Count="1" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="90" Count="2" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="93" Count="1" />
+      <LineId Id="96" Count="8" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="107" Count="4" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="112" Count="2" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="296" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="118" Count="4" />
+      <LineId Id="221" Count="0" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="125" Count="5" />
+      <LineId Id="136" Count="0" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="133" Count="1" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="132" Count="0" />
+      <LineId Id="140" Count="1" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="145" Count="4" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="142" Count="0" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="166" Count="9" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="176" Count="0" />
+      <LineId Id="178" Count="1" />
+      <LineId Id="185" Count="0" />
+      <LineId Id="180" Count="1" />
+      <LineId Id="177" Count="0" />
+      <LineId Id="184" Count="0" />
+      <LineId Id="242" Count="0" />
+      <LineId Id="253" Count="1" />
+      <LineId Id="256" Count="0" />
+      <LineId Id="261" Count="0" />
+      <LineId Id="287" Count="0" />
+      <LineId Id="259" Count="1" />
+      <LineId Id="269" Count="1" />
+      <LineId Id="258" Count="0" />
+      <LineId Id="255" Count="0" />
+      <LineId Id="262" Count="3" />
+      <LineId Id="293" Count="0" />
+      <LineId Id="266" Count="2" />
+      <LineId Id="226" Count="1" />
+      <LineId Id="188" Count="0" />
+      <LineId Id="187" Count="0" />
+      <LineId Id="189" Count="0" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="191" Count="0" />
+      <LineId Id="194" Count="2" />
+      <LineId Id="198" Count="0" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="190" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

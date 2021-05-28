@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <GVL Name="Globale_Variablen" Id="{16d10c83-074b-458e-b51e-9300484e6c21}">
+    <Declaration><![CDATA[{attribute 'Tc2GvlVarNames'}
+VAR_GLOBAL
+	Axis1		: AXIS_REF;
+	Axis2		: AXIS_REF;
+	Axis3		: AXIS_REF;
+	//Axis4		: AXIS_REF;
+	
+	stAxis1		: ST_Axis;
+	stAxis2		: ST_Axis;
+	stAxis3		: ST_Axis;
+
+	fbMotion1	: FB_Motion;
+	fbMotion2	: FB_Motion;
+	fbMotion3	: FB_Motion;
+	
+	
+	bEnable		: BOOL;
+
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="MAIN" Id="{43de32f2-9997-4d23-9117-93960517ea22}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+(* 	Flying Saw synchronization of master and slave axes.
+ *	The tool axis operates while master and slave are synchronized
+ *	The operation takes place consequently after a constant distance 
+ *	of the master. This is a typical cutting precedure.
+ *)
+VAR 
+	
+	
+
+END_VAR
+	]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbMotion1(Axis:= Axis1, stAxis:= stAxis1 , Slave:= Axis2);
+fbMotion2(Axis:= Axis2,stAxis:= stAxis2 , Slave:= Axis1);
+fbMotion3(Axis:= Axis3,stAxis:= stAxis3 , Slave:= Axis2);
+
+IF bEnable THEN
+	stAxis1.IN.bEnable		:= TRUE;
+	stAxis1.IN.fOverride	:= 100;
+	stAxis2.IN.bEnable		:= TRUE;
+	stAxis2.IN.fOverride	:= 100;
+	stAxis3.IN.bEnable		:= TRUE;
+	stAxis3.IN.fOverride	:= 100;
+ELSE
+	stAxis1.IN.bEnable		:= FALSE;
+	stAxis1.IN.fOverride	:= 0;
+	stAxis2.IN.bEnable		:= FALSE;
+	stAxis2.IN.fOverride	:= 0;
+	stAxis3.IN.bEnable		:= FALSE;
+	stAxis3.IN.fOverride	:= 0;
+END_IF
+
+PRG_FlyingSaw();
+PRG_Simulation();]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="199" Count="0" />
+      <LineId Id="311" Count="0" />
+      <LineId Id="351" Count="0" />
+      <LineId Id="350" Count="0" />
+      <LineId Id="323" Count="0" />
+      <LineId Id="310" Count="0" />
+      <LineId Id="324" Count="0" />
+      <LineId Id="327" Count="0" />
+      <LineId Id="325" Count="0" />
+      <LineId Id="352" Count="1" />
+      <LineId Id="343" Count="0" />
+      <LineId Id="347" Count="2" />
+      <LineId Id="345" Count="0" />
+      <LineId Id="354" Count="1" />
+      <LineId Id="346" Count="0" />
+      <LineId Id="368" Count="0" />
+      <LineId Id="342" Count="0" />
+      <LineId Id="369" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
